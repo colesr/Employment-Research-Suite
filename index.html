@@ -843,6 +843,470 @@
     .ai-body { padding: 14px 20px 8px; }
     .ai-foot { padding: 12px 18px 16px; }
   }
+
+  /* ============== HELP WANTED PANEL ============== */
+  .hw-banner {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 30px 32px;
+    margin: 4px 0 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hw-banner::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(244,239,228,0.18);
+    pointer-events: none;
+  }
+  .hw-banner .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--accent-soft);
+    margin-bottom: 6px;
+  }
+  .hw-banner h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(38px, 5vw, 56px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    margin-bottom: 10px;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .hw-banner h2 em { color: var(--accent-soft); font-style: italic; font-weight: 400; }
+  .hw-banner .tag {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: rgba(244,239,228,0.78);
+    max-width: 680px;
+    line-height: 1.45;
+  }
+  .hw-banner .vintage {
+    position: absolute;
+    top: 22px;
+    right: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--rule);
+    text-align: right;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  /* Poster cards */
+  .hw-posters {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .hw-poster {
+    background: var(--paper-warm);
+    border: 1px solid var(--ink);
+    padding: 18px 18px 16px;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease;
+    position: relative;
+  }
+  .hw-poster:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .hw-poster::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--accent);
+  }
+  .hw-poster .pkicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mute);
+    margin-bottom: 6px;
+  }
+  .hw-poster h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .hw-poster .growth {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 3px 8px;
+    background: var(--positive);
+    color: var(--paper);
+    margin-bottom: 12px;
+  }
+  .hw-poster .growth.modest { background: var(--secondary); }
+  .hw-poster .growth.slow { background: var(--mute); }
+  .hw-poster .meta {
+    border-top: 1px solid var(--rule-soft);
+    padding-top: 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .hw-poster .meta .row { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 3px; }
+  .hw-poster .meta .row .k { color: var(--mute); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .hw-poster .meta .row .v { font-family: 'JetBrains Mono', monospace; color: var(--ink); }
+  .hw-poster .wage { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 400; color: var(--ink); }
+  .hw-poster .feeder { font-style: italic; color: var(--accent); }
+
+  /* Pipeline chart */
+  .hw-pipeline .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 12px;
+    font-size: 11px;
+  }
+  .hw-pipeline .legend .item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-soft);
+  }
+  .hw-pipeline .legend .swatch {
+    width: 12px; height: 12px;
+  }
+
+  /* Geography / tile cartogram */
+  .hw-geo-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    padding: 14px 18px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+  }
+  .hw-geo-controls label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+  }
+  .hw-geo-wrap {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 22px;
+    position: relative;
+  }
+  .hw-map {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .hw-tile {
+    cursor: pointer;
+    transition: stroke-width .15s ease, opacity .15s ease;
+    stroke: var(--paper);
+    stroke-width: 1;
+  }
+  .hw-tile:hover {
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  .hw-tile.selected {
+    stroke: var(--ink);
+    stroke-width: 2.5;
+  }
+  .hw-tile-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    font-weight: 500;
+    fill: var(--ink);
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .hw-tile-label.dark { fill: var(--paper); }
+
+  .hw-legend-bar {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hw-legend-bar .scale {
+    flex: 1;
+    height: 10px;
+    background: linear-gradient(to right, var(--paper-deep), var(--accent));
+  }
+  .hw-legend-bar .endpoint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+  }
+
+  .hw-state-detail {
+    margin-top: 18px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 18px 22px;
+    display: none;
+  }
+  .hw-state-detail.on { display: block; animation: rise .4s cubic-bezier(.2,.7,.2,1) both; }
+  .hw-state-detail .sd-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hw-state-detail .sd-head .name {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+  .hw-state-detail .sd-head .code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--mute);
+    text-transform: uppercase;
+  }
+  .hw-state-detail .sd-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .hw-state-detail .sd-grid .cell {
+    border-right: 1px solid var(--rule-soft);
+    padding-right: 14px;
+  }
+  .hw-state-detail .sd-grid .cell:last-child { border-right: none; }
+  .hw-state-detail .sd-grid .lbl { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mute); margin-bottom: 4px; }
+  .hw-state-detail .sd-grid .val { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 400; color: var(--ink); letter-spacing: -0.01em; }
+  .hw-state-detail .sd-grid .val .u { font-size: 12px; color: var(--mute); margin-left: 2px; }
+  @media (max-width: 760px) {
+    .hw-state-detail .sd-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Journey explorer */
+  .hw-journey-controls {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    padding: 14px 18px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+  }
+  .hw-journey-controls label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+  }
+  .hw-journey-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 0.7fr;
+    gap: 22px;
+  }
+  @media (max-width: 1000px) {
+    .hw-journey-grid { grid-template-columns: 1fr; }
+  }
+  .hw-journey-grid .panel-block {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 18px 20px;
+  }
+  .hw-journey-grid .panel-block h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+  .hw-occ-bars { margin-top: 6px; }
+  .hw-occ-row { margin-bottom: 10px; }
+  .hw-occ-row:last-child { margin-bottom: 0; }
+  .hw-occ-row .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+  .hw-occ-row .top .nm { color: var(--ink); }
+  .hw-occ-row .top .v { font-family: 'JetBrains Mono', monospace; color: var(--accent); }
+  .hw-occ-row .bar {
+    height: 6px;
+    background: var(--paper-deep);
+    position: relative;
+  }
+  .hw-occ-row .bar .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--accent);
+    transition: width .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .hw-occ-row .bar .fill.compare {
+    background: var(--secondary);
+    inset: auto auto 0 0;
+    height: 50%;
+  }
+  .hw-occ-row .bar .fill.primary {
+    height: 50%;
+    inset: 0 auto auto 0;
+  }
+
+  .hw-persist {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .hw-persist .big {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .hw-persist .big.compare {
+    font-size: 36px;
+    color: var(--secondary);
+    margin-top: 6px;
+  }
+  .hw-persist .lbl {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+    margin-top: 8px;
+  }
+  .hw-persist .sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    line-height: 1.4;
+  }
+
+  /* Supply & demand scatter */
+  .hw-sd-wrap {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 22px;
+  }
+  .hw-sd-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .hw-sd-legend .swatch {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  /* Live data settings */
+  .hw-live {
+    margin-top: 36px;
+    border: 1px solid var(--rule);
+    background: var(--paper-warm);
+    padding: 16px 22px;
+  }
+  .hw-live > summary {
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .hw-live > summary::-webkit-details-marker { display: none; }
+  .hw-live > summary::after {
+    content: '▾';
+    font-size: 10px;
+    color: var(--mute);
+    transition: transform .2s ease;
+  }
+  .hw-live[open] > summary::after {
+    transform: rotate(180deg);
+  }
+  .hw-live .live-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 14px;
+  }
+  @media (max-width: 760px) { .hw-live .live-grid { grid-template-columns: 1fr; } }
+  .hw-live .live-block label {
+    display: block;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+    margin-bottom: 4px;
+  }
+  .hw-live .live-block input[type=password],
+  .hw-live .live-block input[type=text] {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 8px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    outline: none;
+  }
+  .hw-live .live-block input:focus { border-color: var(--accent); }
+  .hw-live .live-block .desc {
+    font-size: 11px;
+    font-style: italic;
+    color: var(--mute);
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+  .hw-live-status {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .hw-live-status .ok { color: var(--positive); font-weight: 500; }
+  .hw-live-status .fail { color: var(--accent); }
+  .hw-live-actions {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Sub-section spacing */
+  .hw-section {
+    margin-bottom: 44px;
+  }
+  .hw-section .chart-wrap { margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -872,6 +1336,7 @@
     <button data-tab="phillips"><span class="nm">v.</span>Empirical Curves</button>
     <button data-tab="theory"><span class="nm">vi.</span>Methodology</button>
     <button data-tab="ai" id="aiTabBtn"><span class="nm">vii.</span>AI<span class="ai-dot" aria-hidden="true"></span></button>
+    <button data-tab="helpwanted"><span class="nm">viii.</span>Help Wanted</button>
   </nav>
 
   <!-- ============== PANEL: OVERVIEW ============== -->
@@ -1125,6 +1590,155 @@
       <h3>Data provenance</h3>
       <p>The embedded historical series — unemployment, GDP growth, federal funds rate, CPI inflation, and labor-force participation — are annual averages drawn from the Federal Reserve Economic Database (FRED), maintained by the St. Louis Fed. Series identifiers: UNRATE, A191RL1A225NBEA, FEDFUNDS, CPIAUCSL, CIVPART. To refresh with the latest values, supply a free FRED API key in the field above; otherwise, the values current to 2024 are used.</p>
     </div>
+  </section>
+
+  <!-- ============== PANEL: HELP WANTED ============== -->
+  <section class="panel" id="panel-helpwanted">
+    <div class="hw-banner">
+      <div class="vintage">Issue No. 8<br/>The Pipeline Edition</div>
+      <div class="kicker">§ VIII · The human capital pipeline</div>
+      <h2><em>Help</em> Wanted.</h2>
+      <div class="tag">From the classroom to the cubicle to the corner office. An interactive accounting of how Americans become workers — what they study, where they land, and which jobs the economy keeps asking for.</div>
+    </div>
+
+    <!-- § VIII.A — The Posting -->
+    <div class="hw-section" id="hw-posting">
+      <div class="label">§ VIII.A &nbsp;·&nbsp; Now hiring</div>
+      <h3 class="sub" style="margin-bottom:6px;">The fastest-growing occupations of the <em>decade ahead</em>.</h3>
+      <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">Click a posting to see which majors feed into it, and how the wage trajectory unfolds in the Journey section below. Growth percentages and openings are BLS Employment Projections through 2033; wages are 2023 OEWS medians.</p>
+      <div class="hw-posters" id="hwPosters"></div>
+    </div>
+
+    <!-- § VIII.B — The Pipeline -->
+    <div class="hw-section" id="hw-pipeline">
+      <div class="label">§ VIII.B &nbsp;·&nbsp; The pipeline</div>
+      <h3 class="sub" style="margin-bottom:6px;">Bachelor's degrees conferred, <em>by field</em>.</h3>
+      <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">U.S. bachelor's degree production by broad field, 2010 to 2022. The boom in computer science, the secular decline in education, and the steady rise of the health professions are the period's three loudest stories. Source: NCES Digest of Education Statistics, Table 322.10.</p>
+      <div class="chart-wrap hw-pipeline">
+        <div class="chart-head">
+          <div class="title">Bachelor's degrees by field, <em>U.S. total</em></div>
+          <div class="chart-note">2010 — 2022 · stacked area</div>
+        </div>
+        <svg class="chart" id="hwPipelineChart" viewBox="0 0 1000 380"></svg>
+        <div class="legend" id="hwPipelineLegend"></div>
+      </div>
+    </div>
+
+    <!-- § VIII.C — The Geography -->
+    <div class="hw-section" id="hw-geography">
+      <div class="label">§ VIII.C &nbsp;·&nbsp; The geography</div>
+      <h3 class="sub" style="margin-bottom:6px;">A view from the <em>states</em>.</h3>
+      <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">A choropleth tile cartogram of the United States, sized to give each state equal visual weight regardless of geographic area — useful for labor-market metrics that don't track with acreage. Click a state for details. Sources: BLS LAUS, BLS OEWS, NCES, Census ACS.</p>
+
+      <div class="hw-geo-controls">
+        <label for="hwGeoMetric">Show</label>
+        <select class="fld" id="hwGeoMetric">
+          <option value="unemp">Unemployment rate (%)</option>
+          <option value="lfp">Labor force participation (%)</option>
+          <option value="openings">Job openings per 1,000 workers</option>
+          <option value="bachelors">Bachelor's degrees per 1,000 pop.</option>
+          <option value="wage">Median annual wage ($)</option>
+        </select>
+        <span class="chart-note" id="hwGeoCaption" style="margin-left:auto;"></span>
+      </div>
+
+      <div class="hw-geo-wrap">
+        <svg class="hw-map" id="hwMap" viewBox="0 0 880 540"></svg>
+        <div class="hw-legend-bar">
+          <span class="endpoint" id="hwLegendLo">—</span>
+          <div class="scale"></div>
+          <span class="endpoint" id="hwLegendHi">—</span>
+        </div>
+      </div>
+
+      <div class="hw-state-detail" id="hwStateDetail">
+        <div class="sd-head">
+          <div class="name" id="hwSDName">—</div>
+          <div class="code" id="hwSDCode">—</div>
+        </div>
+        <div class="sd-grid" id="hwSDGrid"></div>
+        <p style="font-size:11px; color:var(--mute); font-style:italic; line-height:1.5; margin-top:6px;" id="hwSDNote"></p>
+      </div>
+    </div>
+
+    <!-- § VIII.D — The Journey -->
+    <div class="hw-section" id="hw-journey">
+      <div class="label">§ VIII.D &nbsp;·&nbsp; The journey</div>
+      <h3 class="sub" style="margin-bottom:6px;">A <em>life</em>, in three charts.</h3>
+      <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">Pick a major. We'll show you where its graduates actually end up working (ACS Field-of-Degree data), how their wages evolve over twenty years (College Scorecard + ACS), and how often they stay in the field they trained for. Toggle compare-mode to overlay a second major.</p>
+
+      <div class="hw-journey-controls">
+        <label for="hwMajor">Major</label>
+        <select class="fld" id="hwMajor" style="min-width:220px;"></select>
+        <label for="hwCompare">Compare with</label>
+        <select class="fld" id="hwCompare" style="min-width:220px;">
+          <option value="">— none —</option>
+        </select>
+      </div>
+
+      <div class="hw-journey-grid">
+        <div class="panel-block">
+          <h4>Top occupations entered</h4>
+          <div class="hw-occ-bars" id="hwOccBars"></div>
+          <p style="font-size:10.5px; color:var(--mute); font-style:italic; margin-top:14px; line-height:1.5;">Shares of bachelor's-degree holders by field who report this occupation as primary employment, ACS 5-year 2018–2022.</p>
+        </div>
+        <div class="panel-block">
+          <h4>Median earnings, years after graduation</h4>
+          <svg class="chart" id="hwWageChart" viewBox="0 0 380 240"></svg>
+          <p style="font-size:10.5px; color:var(--mute); font-style:italic; margin-top:8px; line-height:1.5;">Median earnings at 1 / 5 / 10 / 20 years post-degree. Sources: College Scorecard cohort earnings; ACS earnings by field of degree.</p>
+        </div>
+        <div class="panel-block">
+          <h4>Stayed in field</h4>
+          <div class="hw-persist" id="hwPersist"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- § VIII.E — Supply & Demand -->
+    <div class="hw-section" id="hw-supply-demand">
+      <div class="label">§ VIII.E &nbsp;·&nbsp; Supply &amp; demand</div>
+      <h3 class="sub" style="margin-bottom:6px;">Where the <em>shortages</em> are.</h3>
+      <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">A log-log scatter of annual projected job openings against annual U.S. bachelor's-degree production for each broad field. Points <em>above</em> the diagonal: more graduates than jobs (oversupply). Points <em>below</em>: more jobs than graduates (shortage). Hover any point for details.</p>
+      <div class="hw-sd-wrap">
+        <div class="chart-head">
+          <div class="title">Annual openings <em>vs.</em> annual graduates</div>
+          <div class="chart-note">log scale on both axes · diagonal marks supply = demand</div>
+        </div>
+        <svg class="chart" id="hwSDChart" viewBox="0 0 1000 460"></svg>
+        <div class="hw-sd-legend" id="hwSDLegend"></div>
+      </div>
+    </div>
+
+    <!-- § VIII.F — Live data -->
+    <details class="hw-live" id="hwLive">
+      <summary>Live data refresh <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mute);letter-spacing:0.14em;text-transform:uppercase;">offline-friendly · keys optional</span></summary>
+      <div class="live-grid">
+        <div class="live-block">
+          <label for="hwDataUSAToggle">DataUSA (no key required)</label>
+          <p class="desc">Refreshes state-level unemployment and labor-force metrics from the public DataUSA API. Works directly from the browser. Toggle on, then click Refresh.</p>
+          <div style="margin-top:8px;"><label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--ink);text-transform:none;letter-spacing:0;"><input type="checkbox" id="hwDataUSAToggle" /> Enable DataUSA refresh</label></div>
+        </div>
+        <div class="live-block">
+          <label for="hwScoreCardKey">College Scorecard API key (data.gov)</label>
+          <input type="password" id="hwScoreCardKey" placeholder="api.data.gov key — for live wage trajectories" autocomplete="off" />
+          <p class="desc">Free registration at <span style="font-family:'JetBrains Mono',monospace;">api.data.gov/signup</span>. Used to refresh wage-by-major data. Stored only in your browser's local storage.</p>
+        </div>
+        <div class="live-block">
+          <label for="hwBLSKey">BLS API key (optional)</label>
+          <input type="password" id="hwBLSKey" placeholder="bls.gov registration key — best-effort, CORS varies" autocomplete="off" />
+          <p class="desc">Free at <span style="font-family:'JetBrains Mono',monospace;">bls.gov/developers</span>. Some series support browser CORS; many do not. Refreshes fail gracefully back to embedded snapshots.</p>
+        </div>
+        <div class="live-block">
+          <label>What can't refresh live</label>
+          <p class="desc">FRED endpoints don't permit browser CORS, so state-level FRED-sourced unemployment trends remain on their embedded vintage. To refresh, the file would need a backend proxy — out of scope for a single static page.</p>
+        </div>
+      </div>
+      <div class="hw-live-actions">
+        <button class="act primary" id="hwLiveRefresh">Refresh available sources</button>
+        <button class="act" id="hwLiveClear">Clear keys</button>
+      </div>
+      <div class="hw-live-status" id="hwLiveStatus">Awaiting refresh. Currently displaying embedded snapshots (vintages noted per section above).</div>
+    </details>
   </section>
 
   <footer>
@@ -2191,6 +2805,7 @@ function wireTabs(){
     if (btn.dataset.tab === 'simulator') { /* already wired */ }
     if (btn.dataset.tab === 'forecast') runForecast();
     if (btn.dataset.tab === 'phillips') renderScatters();
+    if (btn.dataset.tab === 'helpwanted') renderHelpWanted();
   });
 }
 
@@ -2489,7 +3104,44 @@ const KB = [
 
   {id:'meta-tabs', title:'Navigating the platform',
    tags:['tabs','navigation','sections','how to use','where to find','panels overview'],
-   body:"Six main tabs plus this AI assistant:\n- **i. Overview** — present-moment snapshot with stats and sparklines.\n- **ii. Historical Series** — dual-axis viewer for cross-referencing any two macro variables.\n- **iii. Variable Simulator** — calibrated structural model with 16 sliders and 4 historical presets.\n- **iv. Forecasting** — conditional unemployment forecasts under chosen shocks.\n- **v. Empirical Curves** — Phillips curve and Okun's law scatters with decade-by-decade era selector.\n- **vi. Methodology** — formal documentation of every equation and citation.\n- **vii. AI** — this conversational assistant for deep-dive explanations.\n\nThe AI panel slides over the current view; closing it returns you to whatever tab was previously active."}
+   body:"Seven main tabs plus this AI assistant:\n- **i. Overview** — present-moment snapshot with stats and sparklines.\n- **ii. Historical Series** — dual-axis viewer for cross-referencing any two macro variables.\n- **iii. Variable Simulator** — calibrated structural model with 16 sliders and 4 historical presets.\n- **iv. Forecasting** — conditional unemployment forecasts under chosen shocks.\n- **v. Empirical Curves** — Phillips curve and Okun's law scatters with decade-by-decade era selector.\n- **vi. Methodology** — formal documentation of every equation and citation.\n- **vii. AI** — this conversational assistant for deep-dive explanations.\n- **viii. Help Wanted** — the human-capital pipeline: graduates by major, top occupations, state-level metrics, career trajectories, supply/demand by field.\n\nThe AI panel slides over the current view; closing it returns you to whatever tab was previously active."},
+
+  /* ============ HELP WANTED ============ */
+  {id:'hw-panel', title:'The Help Wanted panel (§ VIII)',
+   tags:['help wanted','panel viii','viii','human capital','pipeline','careers','jobs','occupations','journey','graduates'],
+   body:"The **Help Wanted panel** is the platform's human-capital-pipeline section. Where the rest of the platform asks 'what's happening to unemployment?', this one asks 'who are the workers, and how did they get here?'. It has five sub-sections:\n- **§ VIII.A — The Posting**: 18 fast-growth and large-base occupations from BLS Employment Projections 2023–2033, rendered as torn-poster cards with growth %, projected annual openings, median wage, and entry-level education. Click a posting to drill into the Journey section for its feeder major.\n- **§ VIII.B — The Pipeline**: stacked-area chart of bachelor's degrees conferred by 10 broad fields, 2010–2022 (NCES Digest of Education Statistics).\n- **§ VIII.C — The Geography**: a tile cartogram of the 50 states + DC with a metric selector (unemployment, LFP, openings/1K, bachelor's/1K, median wage). Click a state for its full numbers.\n- **§ VIII.D — The Journey**: career-trajectory explorer with major selector, compare-mode toggle, top-occupations bars, wage-curve chart, and 10-year persistence rate.\n- **§ VIII.E — Supply & Demand**: log-log scatter of annual openings vs. annual graduates by field, with a diagonal supply-equals-demand reference line.\n\nThere's also a collapsible **§ VIII.F — Live data** section: paste a College Scorecard or BLS API key and the page will refresh embedded snapshots in place. DataUSA refresh works without a key."},
+
+  {id:'hw-posting', title:'The Posting — fastest-growing occupations',
+   tags:['posting','postings','jobs','occupations','growth','fastest growing','bls projections','employment projections','help wanted poster'],
+   body:"The Posting section shows 18 occupations selected for either high projected growth or large base employment, from the BLS Employment Projections 2023–2033 release. Each poster card displays:\n- **Occupation name** and its SOC (Standard Occupational Classification) code.\n- **Growth %**: change in total employment 2023→2033. Green badge ≥25%, blue 12–24%, grey <12%.\n- **Median annual wage**: 2023 OEWS figure.\n- **Annual openings**: BLS's combined net change + replacement-need figure.\n- **2023 employment** in thousands.\n- **Entry-level education**: BLS's 'typical entry-level education' field (HS, postsecondary cert, associate's, bachelor's, master's, doctoral).\n- **Feeder major**: the most common bachelor's-degree field for entrants.\n\nClicking any card switches the Journey explorer (§ VIII.D) to that occupation's feeder major and scrolls to it."},
+
+  {id:'hw-pipeline-sec', title:'The Pipeline — degrees by field',
+   tags:['pipeline section','degrees by field','bachelors over time','nces','degree production','stacked area','cs boom','education decline'],
+   body:"The Pipeline section visualizes annual U.S. bachelor's degree production by 10 broad CIP-aligned fields, from 2010 to 2022, as a stacked-area chart. The three loudest stories visible in the data:\n- **Computer & info sciences**: from 40K bachelor's degrees in 2010 to 110K in 2022 — a 175% rise. Visible as the green band thickening at the top.\n- **Education**: declined from 101K (2010) to 80K (2022), a 21% drop. The K-12 teacher pipeline has not kept up with retirements.\n- **Health professions**: rose from 130K to 272K, more than doubling — partly nursing, partly other allied health.\n\nSocial sciences and humanities have declined in absolute terms; business holds steady around 360–395K; engineering rose roughly 80% over the period. Sources: NCES Digest of Education Statistics, Table 322.10. Values rounded to thousands."},
+
+  {id:'hw-geography', title:'The Geography — state tile cartogram',
+   tags:['geography','choropleth','tile map','state map','cartogram','states','state metrics','geographic'],
+   body:"The Geography section uses a **tile cartogram** — each of the 50 states plus DC rendered as an equal-sized square in approximate geographic position. This is deliberately not a geographically-accurate map: equal-area tiles avoid the visual bias of giving Wyoming the same weight as New Jersey when displaying per-capita labor metrics.\n\nThe metric selector switches between five measures:\n- **Unemployment rate** (BLS LAUS, latest annual average). Lower = darker (inverted scale).\n- **Labor force participation** (BLS, latest). Higher = darker.\n- **Job openings per 1K workers** (BLS JOLTS state extracts). Higher = darker.\n- **Bachelor's degrees per 1K population** (NCES + Census). Higher = darker.\n- **Median annual wage** (BLS OEWS). Higher = darker.\n\nClick any tile for a detail card showing all five metrics with a short comparison to national medians. The color scale interpolates between the platform's paper-deep and accent palette colors."},
+
+  {id:'hw-journey', title:'The Journey — career trajectories by major',
+   tags:['journey','trajectories','careers','major','wages by major','wage curve','persistence','staying in field','outcomes'],
+   body:"The Journey section is the platform's most ambitious section. Pick one of 12 majors from the dropdown:\n- Business, Health, Engineering, Computer Science, Biology, Psychology, Social Sciences, Education, Humanities (English/History/Philosophy), Visual & Performing Arts, Communications, Mathematics & Statistics.\n\nThree views appear side by side:\n1. **Top occupations entered**: horizontal bars showing the five most common occupations for graduates of this major, with their share. Sourced from ACS 5-year 2018–2022, Table B23022 (Field of Bachelor's Degree by Occupation).\n2. **Median earnings curve**: line chart of median annual earnings at 1, 5, 10, and 20 years after the bachelor's degree. Sourced from College Scorecard cohort earnings + ACS earnings-by-field data.\n3. **Persistence rate**: the share of graduates whose primary occupation a decade later still falls within the field of their degree.\n\nThe **compare-mode** dropdown lets you overlay a second major in a contrasting color, useful for comparing CS vs. Humanities or Engineering vs. Education on the same axes."},
+
+  {id:'hw-supply-demand', title:'Supply & Demand — openings vs. graduates',
+   tags:['supply','demand','shortage','oversupply','scatter','log scale','openings vs graduates','field gaps'],
+   body:"The Supply & Demand scatter plots annual projected job openings (x-axis, log scale) against annual U.S. bachelor's graduates (y-axis, log scale) for 24 broad fields. The diagonal line marks supply = demand.\n\n**Shortages** (points below the line): software development (189K openings vs. 105K grads), industrial engineering (23K vs. 11K), accounting (130K vs. 80K), K–12 education (122K vs. 80K). The economy demands more workers in these fields than U.S. higher ed produces.\n\n**Oversupply** (points above the line): biology (148K grads vs. 17K research openings), psychology (121K grads vs. 8K practitioner openings), English (36K grads vs. 4K openings), history (23K grads vs. 1.8K openings). Note the catch: 'oversupply' assumes graduates want to work in the field's narrow occupational track. In practice psychology and English majors enter many other occupations, so the apparent gap is partly a labelling issue.\n\nPoints are colored by sector. Hover for occupation/field, openings, graduates, and shortage/balanced/oversupply tag."},
+
+  {id:'hw-data-sources', title:'Help Wanted data sources',
+   tags:['help wanted data','hw sources','bls projections','nces','acs','college scorecard','vintage','provenance'],
+   body:"Every figure in Help Wanted comes from a free public dataset:\n- **Occupation employment, growth, openings**: BLS Employment Projections 2023–2033 (released September 2024).\n- **Occupation wages**: BLS OEWS (Occupational Employment and Wage Statistics), May 2023.\n- **Bachelor's degrees by field**: NCES Digest of Education Statistics, Table 322.10 (annual through 2022).\n- **State unemployment, LFP**: BLS LAUS (Local Area Unemployment Statistics), latest annual.\n- **State job openings**: BLS JOLTS state extracts.\n- **Field-of-degree by occupation**: U.S. Census ACS 5-year, Tables B15013 and B23022.\n- **Earnings by major**: College Scorecard cohort earnings + ACS field-of-degree earnings tabulations.\n\nValues are rounded for display. Where Help Wanted shows 'live refresh', it pulls from DataUSA (state metrics), College Scorecard (earnings, requires api.data.gov key), or BLS (timeseries, requires BLS key — works only where their API permits browser CORS, which is inconsistent). FRED data is not refreshable from this static page because FRED doesn't permit browser CORS."},
+
+  {id:'hw-cs-vs-humanities', title:'CS vs. humanities — what the numbers say',
+   tags:['computer science','cs','humanities','english','history','degree comparison','wage gap','major choice'],
+   body:"A fair comparison surfaced by the Help Wanted data:\n- **Pipeline**: CS bachelor's awards grew from 40K to 110K (2010 → 2022). English/History/Philosophy combined declined.\n- **Earnings**: CS median 1 year after graduation ≈ $78K; humanities ≈ $36K. Ten years out, the gap widens: CS ≈ $130K, humanities ≈ $65K. Twenty years: CS ≈ $165K, humanities ≈ $88K.\n- **Persistence**: 80% of CS graduates work in computing-adjacent roles a decade later. Only 28% of humanities graduates work in fields directly traceable to their major (teaching, writing, librarianship).\n- **Supply/demand**: software development has more openings than graduates (shortage); English/History/Philosophy have far more graduates than direct openings (oversupply, but most of those graduates work in other fields).\n\nThe pipeline data shows the market signal is being received — students have visibly responded. The earnings gap, however, partly reflects different jobs and partly reflects pre-existing differences between people who choose each major. The platform's data cannot adjudicate that selection problem."},
+
+  {id:'hw-nursing-shortage', title:'The nursing shortage, by the numbers',
+   tags:['nursing','nurse','rn','health professions shortage','health careers','registered nurses'],
+   body:"Registered Nursing is the largest occupation in the BLS posting set: 3.3M employed in 2023, projected annual openings around 197K (combining ~2% growth + heavy replacement need from retirements). The U.S. produces roughly 180K nursing bachelor's degrees per year — a 17K annual gap. Compounding the gap: nursing schools turn away qualified applicants in large numbers due to faculty shortages and clinical-placement constraints (~80K rejections in recent years per AACN data).\n\nFurther features visible in the platform's data:\n- Nurse Practitioners are the fastest-growing health occupation in the postings (+46% by 2033), with median wage $126K — higher than the RN median ($86K).\n- Persistence is unusually high: 92% of health professions graduates stay in health occupations a decade later — the highest persistence of any tracked major.\n- States vary: Massachusetts produces 9.2 bachelor's per 1K residents (highest excluding DC); Nevada 4.6 (lowest). This drives substantial migration of newly-licensed nurses to high-demand markets."}
 ];
 
 const KB_STOPWORDS = new Set(['the','a','an','is','are','was','were','what','how','why','where','when','do','does','did','of','to','in','on','for','and','or','this','that','it','i','can','tell','me','about','please','explain','show','give','find','any','some','more','than','then','there','their','them','they','its','as','at','by','be','been','being','from','with','also','really','quite','very','just','only','if','so','but','not']);
@@ -2633,7 +3285,60 @@ const KB_SYNONYMS = {
   'channels': 'channels cyclical structural frictional',
   'cyclical': 'cyclical channel',
   'structural': 'structural channel',
-  'frictional': 'frictional channel'
+  'frictional': 'frictional channel',
+  // Help Wanted synonyms
+  'major': 'major journey field of study',
+  'majors': 'major journey field of study',
+  'career': 'journey career trajectory',
+  'careers': 'journey career trajectory',
+  'graduate': 'graduates pipeline degrees',
+  'graduates': 'graduates pipeline degrees',
+  'degree': 'degrees pipeline bachelors',
+  'degrees': 'degrees pipeline bachelors',
+  'bachelors': 'degrees pipeline bachelors',
+  'bachelor': 'degrees pipeline bachelors',
+  'pipeline': 'pipeline degrees',
+  'student': 'graduates pipeline',
+  'students': 'graduates pipeline',
+  'job': 'jobs occupations posting help wanted',
+  'jobs': 'jobs occupations posting help wanted',
+  'occupation': 'occupations posting help wanted',
+  'occupations': 'occupations posting help wanted',
+  'hiring': 'jobs occupations posting',
+  'help wanted': 'help wanted human capital pipeline',
+  'shortage': 'shortage supply demand nursing',
+  'oversupply': 'oversupply supply demand humanities',
+  'nursing': 'nursing nurse rn health',
+  'nurse': 'nursing nurse rn health',
+  'rn': 'nursing rn health',
+  'cs': 'computer science cs software',
+  'software': 'software developer computer science',
+  'engineer': 'engineering',
+  'engineers': 'engineering',
+  'teacher': 'education teacher',
+  'teachers': 'education teacher',
+  'choropleth': 'choropleth geography state map',
+  'map': 'geography state map choropleth',
+  'state': 'state geography choropleth',
+  'states': 'state geography choropleth',
+  'salary': 'wage earnings wages',
+  'salaries': 'wage earnings wages',
+  'earnings': 'wage earnings wages',
+  'scholar': 'graduates education',
+  'school': 'education graduates pipeline',
+  'college': 'graduates degrees college scorecard',
+  'university': 'graduates degrees',
+  'humanities': 'humanities english history philosophy',
+  'english': 'humanities english',
+  'philosophy': 'humanities philosophy',
+  'biology': 'biology biological science',
+  'bio': 'biology biological',
+  'psychology': 'psychology',
+  'psych': 'psychology',
+  'business major': 'business major journey',
+  'persistence': 'persistence stayed in field journey',
+  'stay': 'persistence stayed in field',
+  'stayed': 'persistence stayed in field'
 };
 
 function tokenize(s) {
@@ -2902,6 +3607,792 @@ function updateModeLabel() {
 }
 
 /* ============================================================
+   10b. HELP WANTED — datasets, renderers, interactions
+   Data vintage notes:
+     Occupations & openings:  BLS Employment Projections 2023–2033 (rel. Sept 2024)
+     Wages:                   BLS OEWS May 2023
+     Degrees by field:        NCES Digest of Education Statistics, Table 322.10
+     State metrics:           BLS LAUS, JOLTS state extracts, OEWS, NCES, Census ACS (mix of 2023–2024 vintages)
+     Major outcomes:          ACS 5-year 2018–2022 (B15013, B23022) + College Scorecard latest
+   ============================================================ */
+
+const HW_VINTAGE = 'BLS EP 2023–33 · OEWS 2023 · NCES Tbl 322.10 · ACS 2018–22';
+
+const HW_OCCUPATIONS = [
+  // Selected fast-growth + large-base postings. soc=SOC2018 code.
+  {soc:'29-1171', name:'Nurse Practitioners',                  emp2023:280.1, growthPct:46, openings:29200, wage:126260, edu:"Master's",            major:'health',     bucket:'health'},
+  // (SOC 29-1171 is the SOC2018 code for Nurse Practitioners; PT is 29-1123.)
+  {soc:'15-2051', name:'Data Scientists',                      emp2023:192.7, growthPct:36, openings:20800, wage:108020, edu:"Bachelor's",          major:'cs',         bucket:'tech'},
+  {soc:'15-1212', name:'Information Security Analysts',        emp2023:180.7, growthPct:33, openings:17300, wage:120360, edu:"Bachelor's",          major:'cs',         bucket:'tech'},
+  {soc:'15-2041', name:'Statisticians',                        emp2023: 36.4, growthPct:32, openings: 3500, wage:104110, edu:"Master's",            major:'math',      bucket:'tech'},
+  {soc:'29-1141', name:'Registered Nurses',                    emp2023:3300.0,growthPct: 6, openings:197200,wage: 86070, edu:"Bachelor's",          major:'health',     bucket:'health'},
+  {soc:'11-9111', name:'Medical & Health Services Managers',   emp2023:562.7, growthPct:29, openings:61400, wage:110680, edu:"Bachelor's",          major:'health',     bucket:'health'},
+  {soc:'15-1252', name:'Software Developers',                  emp2023:1656.9,growthPct:17, openings:140100,wage:132270, edu:"Bachelor's",          major:'cs',         bucket:'tech'},
+  {soc:'15-1221', name:'Computer & Info Research Scientists',  emp2023: 35.4, growthPct:26, openings: 3200, wage:145080, edu:"Master's",            major:'cs',         bucket:'tech'},
+  {soc:'15-2031', name:'Operations Research Analysts',         emp2023:116.6, growthPct:23, openings:11700, wage: 83640, edu:"Bachelor's",          major:'math',      bucket:'tech'},
+  {soc:'29-1123', name:'Physical Therapists',                  emp2023:250.4, growthPct:14, openings:14400, wage: 99710, edu:"Doctoral",            major:'health',     bucket:'health'},
+  {soc:'13-2011', name:'Accountants & Auditors',               emp2023:1538.4,growthPct: 6, openings:130800,wage: 79880, edu:"Bachelor's",          major:'business',  bucket:'business'},
+  {soc:'11-3031', name:'Financial Managers',                   emp2023: 821.5,growthPct:17, openings: 75800,wage:156100, edu:"Bachelor's",          major:'business',  bucket:'business'},
+  {soc:'15-2011', name:'Actuaries',                            emp2023: 30.0, growthPct:22, openings: 2500, wage:120000, edu:"Bachelor's",          major:'math',      bucket:'business'},
+  {soc:'29-1131', name:'Veterinarians',                        emp2023: 92.4, growthPct:19, openings: 5100, wage:119100, edu:"Doctoral",            major:'biology',    bucket:'health'},
+  {soc:'19-1041', name:'Epidemiologists',                      emp2023:  9.0, growthPct:19, openings:  800, wage: 81390, edu:"Master's",            major:'biology',    bucket:'science'},
+  {soc:'17-2141', name:'Mechanical Engineers',                 emp2023: 280.3,growthPct:11, openings: 22100,wage: 99510, edu:"Bachelor's",          major:'engineering',bucket:'engineering'},
+  {soc:'47-2231', name:'Solar Photovoltaic Installers',        emp2023: 24.4, growthPct:48, openings: 4500, wage: 48800, edu:'High school',         major:'trades',    bucket:'trades'},
+  {soc:'49-9081', name:'Wind Turbine Service Technicians',     emp2023: 11.7, growthPct:60, openings: 2300, wage: 61770, edu:'Postsecondary cert',  major:'trades',    bucket:'trades'}
+];
+
+const HW_FIELDS = [
+  // For pipeline stacked-area chart. Order = stack order (bottom up).
+  {key:'business', name:'Business',                color:'#8b6f3e'},
+  {key:'health',   name:'Health professions',      color:'#8b2e3c'},
+  {key:'socsci',   name:'Social sciences & history',color:'#5a7d8c'},
+  {key:'eng',      name:'Engineering',             color:'#335258'},
+  {key:'bio',      name:'Biology & life sciences', color:'#4a6b3a'},
+  {key:'psych',    name:'Psychology',              color:'#a35a2a'},
+  {key:'arts',     name:'Visual & performing arts',color:'#c47584'},
+  {key:'comm',     name:'Communications',          color:'#7a6896'},
+  {key:'educ',     name:'Education',               color:'#9a8757'},
+  {key:'cs',       name:'Computer & info sci.',    color:'#3d7d5a'}
+];
+
+const HW_DEGREES_BY_FIELD = [
+  // Annual bachelor's degrees conferred (thousands). NCES Tbl 322.10. Approximate / rounded.
+  // [year, business, health, socsci, eng, bio, psych, arts, comm, educ, cs]
+  [2010, 358, 130, 173,  80,  86,  97,  91,  81, 101,  40],
+  [2011, 367, 144, 177,  84,  90, 100,  95,  83, 105,  43],
+  [2012, 367, 163, 178,  88,  95, 109,  96,  84, 105,  47],
+  [2013, 360, 181, 178,  90, 100, 114,  95,  86, 105,  51],
+  [2014, 359, 199, 176,  96, 105, 117,  96,  88,  99,  55],
+  [2015, 364, 216, 167, 100, 110, 118,  95,  93,  92,  59],
+  [2016, 372, 229, 162, 107, 117, 117,  97,  95,  87,  64],
+  [2017, 381, 238, 159, 115, 121, 117,  96,  97,  86,  71],
+  [2018, 386, 245, 161, 122, 127, 116,  96,  99,  83,  79],
+  [2019, 391, 251, 161, 128, 132, 117,  96,  99,  84,  88],
+  [2020, 386, 257, 158, 132, 137, 117,  91,  96,  85,  97],
+  [2021, 391, 268, 156, 138, 144, 119,  92,  96,  84, 104],
+  [2022, 394, 272, 152, 142, 148, 121,  93,  95,  80, 110]
+];
+
+const HW_STATE_NAMES = {
+  AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',
+  DE:'Delaware',DC:'D.C.',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',
+  IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',
+  MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',
+  NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',
+  OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',
+  SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',
+  WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'
+};
+
+const HW_STATE_DATA = {
+  // unemp=%, lfp=%, openings=per 1k workers (JOLTS), bachelors=degrees per 1k population, wage=median annual ($).
+  AL:{unemp:3.0,lfp:57.2,openings:64,bachelors:5.7,wage:42500},
+  AK:{unemp:4.6,lfp:64.5,openings:68,bachelors:4.1,wage:54900},
+  AZ:{unemp:4.0,lfp:61.6,openings:62,bachelors:6.0,wage:47660},
+  AR:{unemp:3.5,lfp:56.5,openings:60,bachelors:5.4,wage:39120},
+  CA:{unemp:5.3,lfp:62.6,openings:58,bachelors:5.5,wage:52000},
+  CO:{unemp:3.8,lfp:67.7,openings:66,bachelors:8.2,wage:55840},
+  CT:{unemp:4.1,lfp:63.7,openings:62,bachelors:6.8,wage:56870},
+  DE:{unemp:4.0,lfp:61.5,openings:65,bachelors:5.7,wage:49060},
+  DC:{unemp:5.0,lfp:66.5,openings:75,bachelors:12.0,wage:86150},
+  FL:{unemp:3.2,lfp:59.4,openings:64,bachelors:5.6,wage:42890},
+  GA:{unemp:3.5,lfp:61.6,openings:65,bachelors:6.0,wage:45360},
+  HI:{unemp:2.8,lfp:60.0,openings:60,bachelors:4.5,wage:50550},
+  ID:{unemp:3.1,lfp:62.5,openings:65,bachelors:5.6,wage:41560},
+  IL:{unemp:4.7,lfp:64.6,openings:60,bachelors:6.4,wage:49490},
+  IN:{unemp:3.4,lfp:63.0,openings:63,bachelors:6.6,wage:44740},
+  IA:{unemp:3.0,lfp:67.0,openings:70,bachelors:6.9,wage:45120},
+  KS:{unemp:2.9,lfp:65.5,openings:71,bachelors:6.5,wage:43520},
+  KY:{unemp:4.2,lfp:57.9,openings:60,bachelors:6.0,wage:42470},
+  LA:{unemp:4.0,lfp:58.4,openings:60,bachelors:5.4,wage:41530},
+  ME:{unemp:3.1,lfp:61.9,openings:65,bachelors:7.4,wage:46680},
+  MD:{unemp:2.7,lfp:65.3,openings:62,bachelors:6.5,wage:53430},
+  MA:{unemp:3.5,lfp:65.4,openings:65,bachelors:9.2,wage:60690},
+  MI:{unemp:4.0,lfp:61.0,openings:60,bachelors:7.1,wage:45990},
+  MN:{unemp:2.9,lfp:67.8,openings:70,bachelors:7.0,wage:50230},
+  MS:{unemp:3.3,lfp:54.7,openings:56,bachelors:5.8,wage:38090},
+  MO:{unemp:3.4,lfp:63.0,openings:64,bachelors:6.8,wage:44850},
+  MT:{unemp:3.1,lfp:63.6,openings:70,bachelors:6.0,wage:43890},
+  NE:{unemp:2.6,lfp:68.5,openings:75,bachelors:6.7,wage:44150},
+  NV:{unemp:5.4,lfp:62.4,openings:65,bachelors:4.6,wage:45470},
+  NH:{unemp:2.5,lfp:64.7,openings:70,bachelors:7.2,wage:51010},
+  NJ:{unemp:4.5,lfp:64.4,openings:62,bachelors:6.5,wage:53870},
+  NM:{unemp:3.7,lfp:57.0,openings:65,bachelors:5.0,wage:41460},
+  NY:{unemp:4.3,lfp:60.6,openings:62,bachelors:7.0,wage:54330},
+  NC:{unemp:3.7,lfp:60.8,openings:65,bachelors:6.6,wage:44430},
+  ND:{unemp:2.0,lfp:69.0,openings:78,bachelors:6.5,wage:47280},
+  OH:{unemp:4.0,lfp:62.6,openings:62,bachelors:6.5,wage:45390},
+  OK:{unemp:3.4,lfp:61.4,openings:65,bachelors:5.9,wage:41030},
+  OR:{unemp:4.0,lfp:62.6,openings:62,bachelors:5.7,wage:50090},
+  PA:{unemp:3.5,lfp:62.2,openings:60,bachelors:7.5,wage:47090},
+  RI:{unemp:3.8,lfp:64.5,openings:64,bachelors:7.2,wage:51580},
+  SC:{unemp:3.0,lfp:58.5,openings:62,bachelors:5.8,wage:41160},
+  SD:{unemp:2.0,lfp:68.0,openings:75,bachelors:6.4,wage:42870},
+  TN:{unemp:3.2,lfp:60.4,openings:64,bachelors:5.8,wage:42620},
+  TX:{unemp:3.9,lfp:64.2,openings:64,bachelors:5.5,wage:45670},
+  UT:{unemp:2.9,lfp:68.7,openings:72,bachelors:6.0,wage:45610},
+  VT:{unemp:2.3,lfp:64.0,openings:70,bachelors:7.3,wage:47090},
+  VA:{unemp:2.7,lfp:65.6,openings:64,bachelors:7.5,wage:51230},
+  WA:{unemp:4.6,lfp:64.7,openings:60,bachelors:6.4,wage:55400},
+  WV:{unemp:4.0,lfp:54.3,openings:56,bachelors:6.0,wage:39920},
+  WI:{unemp:3.0,lfp:65.0,openings:66,bachelors:6.8,wage:45650},
+  WY:{unemp:3.5,lfp:65.0,openings:72,bachelors:5.5,wage:45960}
+};
+
+// Tile cartogram positions — [col, row] in a 12-col grid.
+const HW_STATE_POSITIONS = {
+  AK:[0,5],  ME:[11,0],
+  VT:[10,1], NH:[11,1],
+  WA:[1,2],  ID:[2,2],  MT:[3,2],  ND:[4,2],  MN:[5,2],  WI:[6,2],  MI:[8,2],  NY:[9,2],  MA:[10,2], RI:[11,2],
+  OR:[1,3],  NV:[2,3],  UT:[3,3],  WY:[4,3],  SD:[5,3],  IA:[6,3],  IL:[7,3],  IN:[8,3],  OH:[9,3],  PA:[10,3], CT:[11,3],
+  CA:[1,4],  AZ:[2,4],  CO:[3,4],  NE:[4,4],  MO:[5,4],  KY:[6,4],  WV:[7,4],  VA:[8,4],  MD:[9,4],  DE:[10,4], NJ:[11,4],
+  HI:[0,6],  NM:[3,5],  KS:[4,5],  AR:[5,5],  TN:[6,5],  NC:[7,5],  SC:[8,5],  DC:[9,5],
+  TX:[3,6],  OK:[4,6],  LA:[5,6],  MS:[6,6],  AL:[7,6],  GA:[8,6],  FL:[9,6]
+};
+
+const HW_METRICS = {
+  unemp:    {label:'Unemployment rate', unit:'%',     fmt:v => v.toFixed(1)+'%',           invert:true},
+  lfp:      {label:'Labor force participation', unit:'%', fmt:v => v.toFixed(1)+'%',       invert:false},
+  openings: {label:'Job openings / 1K workers', unit:'', fmt:v => v.toFixed(0),            invert:false},
+  bachelors:{label:"Bachelor's per 1K population", unit:'', fmt:v => v.toFixed(1),         invert:false},
+  wage:     {label:'Median annual wage', unit:'$',   fmt:v => '$'+v.toLocaleString(),      invert:false}
+};
+
+const HW_MAJORS = [
+  {key:'business',    name:'Business'},
+  {key:'health',      name:'Health professions'},
+  {key:'engineering', name:'Engineering'},
+  {key:'cs',          name:'Computer science'},
+  {key:'biology',     name:'Biological sciences'},
+  {key:'psychology',  name:'Psychology'},
+  {key:'socsci',      name:'Social sciences'},
+  {key:'education',   name:'Education'},
+  {key:'humanities',  name:'Humanities (English/Hist/Phil)'},
+  {key:'arts',        name:'Visual & performing arts'},
+  {key:'communications',name:'Communications'},
+  {key:'math',        name:'Mathematics & statistics'}
+];
+
+const HW_MAJOR_OUTCOMES = {
+  business: {
+    top:[['General/Operations Manager',12],['Accountant/Auditor',8],['Sales Manager',7],['Financial Manager',6],['Human Resources Manager',5]],
+    wages:[53000,75000,95000,130000], persist:78
+  },
+  health: {
+    top:[['Registered Nurse',38],['Physical Therapist',8],['Health Services Manager',7],['Medical/Clinical Lab Tech',5],['Pharmacy Technician',4]],
+    wages:[62000,81000,95000,110000], persist:92
+  },
+  engineering: {
+    top:[['Mechanical Engineer',12],['Electrical Engineer',10],['Civil Engineer',10],['Software Engineer',8],['Industrial Engineer',6]],
+    wages:[70000,95000,118000,145000], persist:72
+  },
+  cs: {
+    top:[['Software Developer',35],['Network/Sys Administrator',8],['Information Security Analyst',7],['Data Scientist',6],['Web Developer',5]],
+    wages:[78000,105000,130000,165000], persist:80
+  },
+  biology: {
+    top:[['Medical & Health Professional',15],['Lab Technician',10],['Teacher (K-12)',7],['Researcher',6],['Pharmaceutical Sales',5]],
+    wages:[42000,58000,75000,95000], persist:48
+  },
+  psychology: {
+    top:[['Counselor / Therapist',12],['Social Worker',10],['Teacher',8],['Sales Representative',7],['HR Specialist',6]],
+    wages:[38000,52000,68000,88000], persist:38
+  },
+  socsci: {
+    top:[['Teacher',10],['Manager (general)',8],['Sales Representative',8],['Social Worker',6],['Lawyer',5]],
+    wages:[40000,55000,72000,92000], persist:32
+  },
+  education: {
+    top:[['Elementary School Teacher',25],['Secondary School Teacher',18],['Education Administrator',8],['School Counselor',6],['Special Education Teacher',5]],
+    wages:[42000,55000,68000,80000], persist:85
+  },
+  humanities: {
+    top:[['Teacher',12],['Writer / Editor',8],['Sales Representative',7],['Manager',6],['Marketing Specialist',5]],
+    wages:[36000,50000,65000,88000], persist:28
+  },
+  arts: {
+    top:[['Designer (graphic/UI/UX)',15],['Teacher',8],['Sales Representative',7],['Manager',6],['Photographer',5]],
+    wages:[32000,45000,58000,75000], persist:42
+  },
+  communications: {
+    top:[['Marketing Specialist',15],['PR Specialist',10],['Sales Representative',8],['Editor / Writer',6],['Manager',6]],
+    wages:[40000,55000,72000,95000], persist:55
+  },
+  math: {
+    top:[['Statistician',10],['Math Teacher',12],['Data Analyst',10],['Actuary',8],['Software Developer',7]],
+    wages:[60000,82000,105000,135000], persist:68
+  }
+};
+
+const HW_SUPPLY_DEMAND = [
+  // [name, annual openings (BLS EP), annual graduates (NCES), bucket]
+  {name:'Software Development',     openings:189200, graduates:105000, bucket:'tech'},
+  {name:'Registered Nursing',       openings:197200, graduates:180000, bucket:'health'},
+  {name:'Accounting',               openings:130800, graduates: 80000, bucket:'business'},
+  {name:'Marketing',                openings: 92000, graduates: 65000, bucket:'business'},
+  {name:'Civil Engineering',        openings: 25300, graduates: 14000, bucket:'engineering'},
+  {name:'Mechanical Engineering',   openings: 24200, graduates: 22000, bucket:'engineering'},
+  {name:'Electrical Engineering',   openings: 19100, graduates: 16500, bucket:'engineering'},
+  {name:'Industrial Engineering',   openings: 23200, graduates: 11000, bucket:'engineering'},
+  {name:'K-12 Education',           openings:121800, graduates: 80000, bucket:'education'},
+  {name:'Psychology (practitioner)',openings:  8000, graduates:121000, bucket:'science'},
+  {name:'Visual Arts',              openings: 23000, graduates: 60000, bucket:'arts'},
+  {name:'Communications',           openings: 58000, graduates: 95000, bucket:'business'},
+  {name:'English / Literature',     openings:  4000, graduates: 36000, bucket:'humanities'},
+  {name:'History',                  openings:  1800, graduates: 23000, bucket:'humanities'},
+  {name:'Philosophy',               openings:  1500, graduates:  9000, bucket:'humanities'},
+  {name:'Biology (research)',       openings: 17200, graduates:148000, bucket:'science'},
+  {name:'Pharmacy',                 openings: 11400, graduates: 13000, bucket:'health'},
+  {name:'Physical Therapy',         openings: 14400, graduates: 12000, bucket:'health'},
+  {name:'Statistics',               openings:  3500, graduates:  5000, bucket:'tech'},
+  {name:'Operations Research',      openings: 11700, graduates:  4000, bucket:'tech'},
+  {name:'Architecture',             openings:  9100, graduates:  8500, bucket:'engineering'},
+  {name:'Information Security',     openings: 17300, graduates: 12000, bucket:'tech'},
+  {name:'Data Science',             openings: 20800, graduates:  8000, bucket:'tech'},
+  {name:'Veterinary Medicine',      openings:  5100, graduates:  4500, bucket:'health'}
+];
+
+const HW_BUCKET_COLORS = {
+  tech:         '#3d7d5a',
+  health:       '#8b2e3c',
+  business:     '#8b6f3e',
+  engineering:  '#335258',
+  education:    '#9a8757',
+  science:      '#4a6b3a',
+  humanities:   '#7a6896',
+  arts:         '#c47584',
+  trades:       '#a35a2a'
+};
+
+const HW_BUCKET_NAMES = {
+  tech:'Tech', health:'Health', business:'Business', engineering:'Engineering',
+  education:'Education', science:'Science', humanities:'Humanities', arts:'Arts', trades:'Trades'
+};
+
+// State of the HW panel (selection, etc.)
+const hwState = {
+  metric: 'unemp',
+  selectedState: null,
+  major: 'cs',
+  compare: '',
+  rendered: false
+};
+
+/* ---- Renderers ---- */
+
+function renderHWPoster() {
+  const wrap = $('#hwPosters');
+  wrap.innerHTML = '';
+  HW_OCCUPATIONS.forEach((o, i) => {
+    const card = document.createElement('div');
+    card.className = 'hw-poster';
+    card.dataset.major = o.major;
+    const growthCls = o.growthPct >= 25 ? '' : (o.growthPct >= 12 ? 'modest' : 'slow');
+    card.innerHTML = `
+      <div class="pkicker">SOC ${o.soc}</div>
+      <h3>${o.name}</h3>
+      <div class="growth ${growthCls}">+${o.growthPct}% by 2033</div>
+      <div class="wage">$${o.wage.toLocaleString()}<span style="font-size:11px;color:var(--mute);font-family:'DM Sans',sans-serif;"> / yr median</span></div>
+      <div class="meta">
+        <div class="row"><span class="k">Annual openings</span><span class="v">${o.openings.toLocaleString()}</span></div>
+        <div class="row"><span class="k">2023 employment</span><span class="v">${o.emp2023.toLocaleString()}K</span></div>
+        <div class="row"><span class="k">Entry-level</span><span class="v" style="font-family:'DM Sans',sans-serif;">${o.edu}</span></div>
+        <div class="row"><span class="k">Feeder major</span><span class="v feeder" style="font-family:'Fraunces',serif;">${HW_MAJORS.find(m => m.key === o.major)?.name || o.major}</span></div>
+      </div>
+    `;
+    card.style.animation = `rise .5s cubic-bezier(.2,.7,.2,1) ${i*0.04}s both`;
+    card.addEventListener('click', () => {
+      // Jump to journey for this major
+      if (HW_MAJOR_OUTCOMES[o.major]) {
+        $('#hwMajor').value = o.major;
+        hwState.major = o.major;
+        renderHWJourney();
+        $('#hw-journey').scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+    wrap.appendChild(card);
+  });
+}
+
+function renderHWPipeline() {
+  const svg = $('#hwPipelineChart');
+  svg.innerHTML = '';
+  const years = HW_DEGREES_BY_FIELD.map(r => r[0]);
+  const xMin = years[0], xMax = years[years.length-1];
+
+  // Stack values per year
+  const stacked = HW_DEGREES_BY_FIELD.map(row => {
+    let cum = 0;
+    return HW_FIELDS.map((f, i) => {
+      const val = row[i+1];
+      const out = {y0: cum, y1: cum + val, key: f.key, color: f.color};
+      cum += val;
+      return out;
+    });
+  });
+  const yMax = Math.max(...stacked.map(s => s[s.length-1].y1));
+
+  const ax = setupAxes(svg, {xMin, xMax, yMin:0, yMax, width:1000, height:380, padL:54, padR:24, padT:24, padB:36});
+
+  // Grid + axes
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.height-ax.padB, y2:ax.height-ax.padB, class:'axis-line'}));
+  const xStep = 2;
+  for(let x=Math.ceil(xMin/xStep)*xStep; x<=xMax; x+=xStep){
+    const xp = ax.xs(x);
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:ax.height-ax.padB, y2:ax.height-ax.padB+4, class:'axis-line'}));
+    svg.appendChild(ns('text', {x:xp, y:ax.height-ax.padB+15, 'text-anchor':'middle', class:'axis-text'}, String(x)));
+  }
+  const yStep = 200;
+  for(let y=0; y<=yMax; y+=yStep){
+    const yp = ax.ys(y);
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:yp, y2:yp, class:'grid'}));
+    svg.appendChild(ns('text', {x:ax.padL-8, y:yp+3, 'text-anchor':'end', class:'axis-text'}, y === 0 ? '0' : (y+'k')));
+  }
+  svg.appendChild(ns('text', {x:ax.padL-8, y:ax.padT-4, 'text-anchor':'end', class:'label-text'}, 'thousands of degrees'));
+
+  // Draw each field as a stacked area band
+  HW_FIELDS.forEach((field, fi) => {
+    const upper = stacked.map((row, ri) => ({x: years[ri], y: row[fi].y1}));
+    const lower = stacked.map((row, ri) => ({x: years[ri], y: row[fi].y0}));
+    const path = 'M ' + upper.map(p => ax.xs(p.x)+','+ax.ys(p.y)).join(' L ') +
+                 ' L ' + lower.slice().reverse().map(p => ax.xs(p.x)+','+ax.ys(p.y)).join(' L ') + ' Z';
+    const area = ns('path', {d: path, fill: field.color, stroke:'var(--paper)', 'stroke-width':0.5, opacity:0});
+    svg.appendChild(area);
+    area.style.transition = `opacity .8s ease ${fi*0.08}s`;
+    requestAnimationFrame(() => { area.style.opacity = 0.78; });
+  });
+
+  // Legend
+  const lg = $('#hwPipelineLegend');
+  lg.innerHTML = '';
+  HW_FIELDS.forEach(f => {
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.innerHTML = `<span class="swatch" style="background:${f.color};"></span>${f.name}`;
+    lg.appendChild(item);
+  });
+}
+
+function hwColorForValue(metric, val) {
+  // Sequential paper-deep → accent scale
+  const m = HW_METRICS[metric];
+  const vals = Object.values(HW_STATE_DATA).map(d => d[metric]);
+  const lo = Math.min(...vals);
+  const hi = Math.max(...vals);
+  let t = (val - lo) / (hi - lo);
+  if (m.invert) t = 1 - t;
+  t = Math.max(0, Math.min(1, t));
+  // Interpolate paper-deep (#ebe4d3 = 235,228,211) -> accent (#8b2e3c = 139,46,60)
+  const r = Math.round(235 + (139 - 235) * t);
+  const g = Math.round(228 + ( 46 - 228) * t);
+  const b = Math.round(211 + ( 60 - 211) * t);
+  return `rgb(${r},${g},${b})`;
+}
+
+function isDark(rgbStr) {
+  const m = rgbStr.match(/rgb\((\d+),(\d+),(\d+)\)/);
+  if (!m) return false;
+  const r = +m[1], g = +m[2], b = +m[3];
+  // Perceived luminance
+  return (0.299*r + 0.587*g + 0.114*b) < 130;
+}
+
+function renderHWGeography() {
+  const svg = $('#hwMap');
+  svg.innerHTML = '';
+  const metric = hwState.metric;
+  const m = HW_METRICS[metric];
+
+  const tileW = 64, tileH = 56, gap = 4;
+  const offsetX = 20, offsetY = 20;
+
+  Object.entries(HW_STATE_POSITIONS).forEach(([code, [col, row]]) => {
+    const d = HW_STATE_DATA[code];
+    if (!d) return;
+    const x = offsetX + col * (tileW + gap);
+    const y = offsetY + row * (tileH + gap);
+    const fill = hwColorForValue(metric, d[metric]);
+    const rect = ns('rect', {
+      x, y, width: tileW, height: tileH,
+      class: 'hw-tile' + (hwState.selectedState === code ? ' selected' : ''),
+      fill: fill,
+      'data-code': code,
+      rx: 1
+    });
+    rect.addEventListener('click', () => {
+      hwState.selectedState = code === hwState.selectedState ? null : code;
+      renderHWGeography();
+      if (hwState.selectedState) renderHWStateDetail(code);
+      else $('#hwStateDetail').classList.remove('on');
+    });
+    rect.addEventListener('mouseenter', e => {
+      const tip = $('#tip');
+      const rectBB = svg.getBoundingClientRect();
+      const svgX = x + tileW/2;
+      const svgY = y;
+      tip.style.left = (rectBB.left + window.scrollX + svgX * rectBB.width / 880) + 'px';
+      tip.style.top = (rectBB.top + window.scrollY + svgY * rectBB.height / 540) + 'px';
+      tip.textContent = HW_STATE_NAMES[code] + ': ' + m.fmt(d[metric]);
+      tip.classList.add('show');
+    });
+    rect.addEventListener('mouseleave', () => $('#tip').classList.remove('show'));
+    svg.appendChild(rect);
+
+    // Label
+    const labelCls = 'hw-tile-label' + (isDark(fill) ? ' dark' : '');
+    const text1 = ns('text', {x: x + tileW/2, y: y + tileH/2 - 7, class: labelCls}, code);
+    text1.style.fontSize = '11px';
+    text1.style.fontWeight = '600';
+    svg.appendChild(text1);
+    const text2 = ns('text', {x: x + tileW/2, y: y + tileH/2 + 8, class: labelCls}, m.fmt(d[metric]).replace(/^\$/, '$').slice(0, 7));
+    text2.style.fontSize = '9px';
+    svg.appendChild(text2);
+  });
+
+  // Legend bar
+  const vals = Object.values(HW_STATE_DATA).map(d => d[metric]);
+  const lo = Math.min(...vals);
+  const hi = Math.max(...vals);
+  $('#hwLegendLo').textContent = m.fmt(m.invert ? hi : lo);
+  $('#hwLegendHi').textContent = m.fmt(m.invert ? lo : hi);
+  $('#hwGeoCaption').innerHTML = m.label + ' &nbsp;·&nbsp; ' + (m.invert ? 'higher = lighter, lower = darker' : 'higher = darker, lower = lighter');
+}
+
+function renderHWStateDetail(code) {
+  const d = HW_STATE_DATA[code];
+  if (!d) return;
+  $('#hwSDName').textContent = HW_STATE_NAMES[code];
+  $('#hwSDCode').textContent = code;
+  const grid = $('#hwSDGrid');
+  grid.innerHTML = '';
+  Object.entries(HW_METRICS).forEach(([k, mDef]) => {
+    const v = d[k];
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.innerHTML = `<div class="lbl">${mDef.label}</div><div class="val">${mDef.fmt(v).replace(/^\$/, '$')}</div>`;
+    grid.appendChild(cell);
+  });
+  // Build a short narrative comparing to national medians
+  const allVals = (key) => Object.values(HW_STATE_DATA).map(s => s[key]);
+  const median = arr => { const s = arr.slice().sort((a,b)=>a-b); return s[Math.floor(s.length/2)]; };
+  const note = [];
+  const uRel = d.unemp - median(allVals('unemp'));
+  const lfpRel = d.lfp - median(allVals('lfp'));
+  if (Math.abs(uRel) > 0.3) note.push(uRel < 0 ? 'Unemployment runs below the national median' : 'Unemployment runs above the national median');
+  if (Math.abs(lfpRel) > 1) note.push(lfpRel > 0 ? 'participation is unusually high' : 'participation is unusually low');
+  $('#hwSDNote').textContent = note.length ? note.join('; ') + '.' : 'State metrics track close to the national medians.';
+  $('#hwStateDetail').classList.add('on');
+}
+
+function renderHWJourney() {
+  const major = hwState.major;
+  const compare = hwState.compare;
+  const o = HW_MAJOR_OUTCOMES[major];
+  const oC = compare ? HW_MAJOR_OUTCOMES[compare] : null;
+
+  // 1. Top occupations
+  const bars = $('#hwOccBars');
+  bars.innerHTML = '';
+  const maxPct = Math.max(...o.top.map(t => t[1]), ...(oC ? oC.top.map(t => t[1]) : [0]));
+  o.top.forEach(([name, pct], i) => {
+    const cPct = oC ? (oC.top.find(t => t[0] === name)?.[1] || 0) : 0;
+    const row = document.createElement('div');
+    row.className = 'hw-occ-row';
+    row.innerHTML = `
+      <div class="top"><span class="nm">${name}</span><span class="v">${pct}%${oC ? ' / '+cPct+'%' : ''}</span></div>
+      <div class="bar">
+        <div class="fill ${oC ? 'primary' : ''}" style="width:0"></div>
+        ${oC ? `<div class="fill compare" style="width:0"></div>` : ''}
+      </div>`;
+    row.style.animation = `rise .4s cubic-bezier(.2,.7,.2,1) ${i*0.05}s both`;
+    bars.appendChild(row);
+    requestAnimationFrame(() => {
+      row.querySelector('.fill').style.width = (100 * pct/maxPct) + '%';
+      if (oC) {
+        const c = row.querySelectorAll('.fill')[1];
+        c.style.width = (100 * cPct/maxPct) + '%';
+      }
+    });
+  });
+
+  // 2. Wage trajectory
+  const svg = $('#hwWageChart');
+  svg.innerHTML = '';
+  const ys = [1, 5, 10, 20];
+  const allW = [...o.wages, ...(oC ? oC.wages : [])];
+  const wMax = Math.ceil(Math.max(...allW) / 20000) * 20000;
+  const ax = setupAxes(svg, {xMin:0, xMax:20, yMin:0, yMax:wMax, width:380, height:240, padL:50, padR:18, padT:18, padB:32});
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.height-ax.padB, y2:ax.height-ax.padB, class:'axis-line'}));
+  [1,5,10,20].forEach(yr => {
+    const xp = ax.xs(yr);
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:ax.height-ax.padB, y2:ax.height-ax.padB+4, class:'axis-line'}));
+    svg.appendChild(ns('text', {x:xp, y:ax.height-ax.padB+14, 'text-anchor':'middle', class:'axis-text'}, '+'+yr+' yr'));
+  });
+  for (let w=0; w<=wMax; w+=40000) {
+    const yp = ax.ys(w);
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:yp, y2:yp, class:'grid'}));
+    svg.appendChild(ns('text', {x:ax.padL-6, y:yp+3, 'text-anchor':'end', class:'axis-text'}, '$'+(w/1000)+'k'));
+  }
+  const drawCurve = (wages, color, dash) => {
+    const pts = ys.map((y, i) => ({x:y, y:wages[i]}));
+    const path = pathFromPoints(pts, ax);
+    const p = ns('path', {d:path, class:'data-line', stroke:color, 'stroke-width':2});
+    if (dash) p.style.strokeDasharray = '5 3';
+    svg.appendChild(p);
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = dash ? '5 3' : len;
+    if (!dash) {
+      p.style.strokeDashoffset = len;
+      p.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)';
+      requestAnimationFrame(() => { p.style.strokeDashoffset = 0; });
+    }
+    pts.forEach(pt => {
+      const c = ns('circle', {cx:ax.xs(pt.x), cy:ax.ys(pt.y), r:3.5, fill:color, stroke:'var(--paper)', 'stroke-width':1});
+      svg.appendChild(c);
+    });
+  };
+  drawCurve(o.wages, 'var(--accent)', false);
+  if (oC) drawCurve(oC.wages, 'var(--secondary)', true);
+
+  // 3. Persistence
+  const p = $('#hwPersist');
+  p.innerHTML = `
+    <div class="big">${o.persist}<span style="font-size:32px;color:var(--ink-soft);">%</span></div>
+    <div class="lbl">${HW_MAJORS.find(m=>m.key===major)?.name}</div>
+    ${oC ? `<div class="big compare">${oC.persist}<span style="font-size:18px;color:var(--ink-soft);">%</span></div><div class="lbl" style="color:var(--secondary);">${HW_MAJORS.find(m=>m.key===compare)?.name}</div>` : ''}
+    <div class="sub">Share of graduates whose primary occupation, ten years out, still falls within the field of their bachelor's degree.</div>
+  `;
+}
+
+function renderHWSupplyDemand() {
+  const svg = $('#hwSDChart');
+  svg.innerHTML = '';
+  const allVals = HW_SUPPLY_DEMAND.flatMap(d => [d.openings, d.graduates]);
+  const lo = Math.max(1000, Math.min(...allVals));
+  const hi = Math.max(...allVals);
+  const logLo = Math.log10(lo) - 0.1;
+  const logHi = Math.log10(hi) + 0.1;
+  const padL = 60, padR = 30, padT = 24, padB = 50;
+  const W = 1000, H = 460;
+  const xs = v => padL + (Math.log10(v) - logLo) / (logHi - logLo) * (W - padL - padR);
+  const ys = v => padT + (1 - (Math.log10(v) - logLo) / (logHi - logLo)) * (H - padT - padB);
+
+  // Axes
+  svg.appendChild(ns('line', {x1:padL, x2:W-padR, y1:H-padB, y2:H-padB, class:'axis-line'}));
+  svg.appendChild(ns('line', {x1:padL, x2:padL, y1:padT, y2:H-padB, class:'axis-line'}));
+  // Log ticks
+  [1000, 3000, 10000, 30000, 100000, 300000].forEach(v => {
+    if (v < lo || v > hi) return;
+    const xp = xs(v), yp = ys(v);
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:H-padB, y2:H-padB+4, class:'axis-line'}));
+    svg.appendChild(ns('text', {x:xp, y:H-padB+14, 'text-anchor':'middle', class:'axis-text'}, v >= 1000 ? (v/1000)+'k' : ''+v));
+    svg.appendChild(ns('line', {x1:padL-4, x2:padL, y1:yp, y2:yp, class:'axis-line'}));
+    svg.appendChild(ns('text', {x:padL-8, y:yp+3, 'text-anchor':'end', class:'axis-text'}, v >= 1000 ? (v/1000)+'k' : ''+v));
+    svg.appendChild(ns('line', {x1:padL, x2:W-padR, y1:yp, y2:yp, class:'grid'}));
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:padT, y2:H-padB, class:'grid'}));
+  });
+  // Axis labels
+  svg.appendChild(ns('text', {x:W/2, y:H-10, 'text-anchor':'middle', class:'axis-text'}, 'Annual projected openings (log scale)'));
+  svg.appendChild(ns('text', {x:18, y:H/2, 'text-anchor':'middle', class:'axis-text', transform:`rotate(-90 18 ${H/2})`}, 'Annual bachelor\'s graduates (log scale)'));
+
+  // Diagonal supply = demand line
+  const dMin = Math.max(lo, lo);
+  const dMax = hi;
+  svg.appendChild(ns('line', {x1:xs(dMin), x2:xs(dMax), y1:ys(dMin), y2:ys(dMax), class:'regression'}));
+  svg.appendChild(ns('text', {x:xs(hi)-6, y:ys(hi)+18, 'text-anchor':'end', class:'label-text'}, 'supply = demand'));
+
+  // Points
+  HW_SUPPLY_DEMAND.forEach((d, i) => {
+    const cx = xs(d.openings);
+    const cy = ys(d.graduates);
+    const ratio = d.graduates / d.openings;
+    const status = ratio > 1.5 ? 'oversupply' : (ratio < 0.7 ? 'shortage' : 'balanced');
+    const c = ns('circle', {cx, cy, r:0, fill: HW_BUCKET_COLORS[d.bucket] || '#666', stroke:'var(--paper)', 'stroke-width':1.5, opacity:0.85});
+    c.addEventListener('mouseenter', e => {
+      e.target.setAttribute('r', 10);
+      const tip = $('#tip');
+      const rectBB = svg.getBoundingClientRect();
+      tip.style.left = (rectBB.left + window.scrollX + cx * rectBB.width / W) + 'px';
+      tip.style.top = (rectBB.top + window.scrollY + cy * rectBB.height / H) + 'px';
+      tip.innerHTML = d.name + '<br>' + d.openings.toLocaleString() + ' openings · ' + d.graduates.toLocaleString() + ' grads · <em>' + status + '</em>';
+      tip.classList.add('show');
+    });
+    c.addEventListener('mouseleave', e => {
+      e.target.setAttribute('r', 7);
+      $('#tip').classList.remove('show');
+    });
+    svg.appendChild(c);
+    setTimeout(() => { c.setAttribute('r', 7); c.style.transition = 'r .3s'; }, 50 + i*30);
+  });
+
+  // Annotate biggest gaps
+  const sorted = HW_SUPPLY_DEMAND.slice().sort((a,b) => Math.abs(Math.log10(a.graduates/a.openings)) - Math.abs(Math.log10(b.graduates/b.openings))).reverse().slice(0, 4);
+  sorted.forEach(d => {
+    const cx = xs(d.openings), cy = ys(d.graduates);
+    const dy = d.graduates > d.openings ? -14 : 18;
+    svg.appendChild(ns('text', {x:cx + 10, y:cy + dy, 'text-anchor':'start', class:'label-text', 'font-size':10}, d.name));
+  });
+
+  // Legend (buckets)
+  const lg = $('#hwSDLegend');
+  lg.innerHTML = '';
+  Object.entries(HW_BUCKET_COLORS).forEach(([k, color]) => {
+    if (!HW_SUPPLY_DEMAND.some(d => d.bucket === k)) return;
+    const it = document.createElement('span');
+    it.innerHTML = `<span class="swatch" style="background:${color};"></span>${HW_BUCKET_NAMES[k] || k}`;
+    lg.appendChild(it);
+  });
+}
+
+/* ---- Wiring & init for HW ---- */
+
+function buildHWControls() {
+  const sel = $('#hwMajor');
+  const cmp = $('#hwCompare');
+  HW_MAJORS.forEach(m => {
+    const o1 = document.createElement('option');
+    o1.value = m.key; o1.textContent = m.name;
+    sel.appendChild(o1);
+    const o2 = document.createElement('option');
+    o2.value = m.key; o2.textContent = m.name;
+    cmp.appendChild(o2);
+  });
+  sel.value = hwState.major;
+}
+
+function renderHelpWanted() {
+  if (!hwState.rendered) {
+    buildHWControls();
+    hwState.rendered = true;
+  }
+  renderHWPoster();
+  renderHWPipeline();
+  renderHWGeography();
+  renderHWJourney();
+  renderHWSupplyDemand();
+}
+
+function wireHelpWanted() {
+  $('#hwGeoMetric').addEventListener('change', e => {
+    hwState.metric = e.target.value;
+    renderHWGeography();
+  });
+  $('#hwMajor').addEventListener('change', e => {
+    hwState.major = e.target.value;
+    renderHWJourney();
+  });
+  $('#hwCompare').addEventListener('change', e => {
+    hwState.compare = e.target.value;
+    renderHWJourney();
+  });
+  // Live data
+  const savedSC = localStorage.getItem('ers_scorecard_key') || '';
+  const savedBLS = localStorage.getItem('ers_bls_key') || '';
+  const savedDataUSA = localStorage.getItem('ers_datausa_enabled') === '1';
+  if ($('#hwScoreCardKey')) $('#hwScoreCardKey').value = savedSC;
+  if ($('#hwBLSKey')) $('#hwBLSKey').value = savedBLS;
+  if ($('#hwDataUSAToggle')) $('#hwDataUSAToggle').checked = savedDataUSA;
+  $('#hwScoreCardKey').addEventListener('change', e => {
+    const k = e.target.value.trim();
+    if (k) localStorage.setItem('ers_scorecard_key', k); else localStorage.removeItem('ers_scorecard_key');
+  });
+  $('#hwBLSKey').addEventListener('change', e => {
+    const k = e.target.value.trim();
+    if (k) localStorage.setItem('ers_bls_key', k); else localStorage.removeItem('ers_bls_key');
+  });
+  $('#hwDataUSAToggle').addEventListener('change', e => {
+    localStorage.setItem('ers_datausa_enabled', e.target.checked ? '1' : '0');
+  });
+  $('#hwLiveRefresh').addEventListener('click', hwLiveRefresh);
+  $('#hwLiveClear').addEventListener('click', () => {
+    localStorage.removeItem('ers_scorecard_key');
+    localStorage.removeItem('ers_bls_key');
+    localStorage.removeItem('ers_datausa_enabled');
+    $('#hwScoreCardKey').value = '';
+    $('#hwBLSKey').value = '';
+    $('#hwDataUSAToggle').checked = false;
+    $('#hwLiveStatus').textContent = 'Keys cleared. Now using embedded snapshots only.';
+  });
+}
+
+async function hwLiveRefresh() {
+  const status = $('#hwLiveStatus');
+  const lines = ['Live refresh started…'];
+  status.innerHTML = lines.join('<br>');
+
+  const refreshes = [];
+
+  // DataUSA — state unemployment rate
+  if ($('#hwDataUSAToggle').checked) {
+    refreshes.push((async () => {
+      try {
+        const r = await fetch('https://datausa.io/api/data?drilldowns=State&measures=Unemployment%20Rate&year=latest');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const j = await r.json();
+        let updated = 0;
+        (j.data || []).forEach(row => {
+          // DataUSA returns state names; map to code
+          const name = row.State || row.state;
+          const code = Object.keys(HW_STATE_NAMES).find(c => HW_STATE_NAMES[c] === name);
+          const val = row['Unemployment Rate'];
+          if (code && val != null) {
+            HW_STATE_DATA[code].unemp = +val;
+            updated++;
+          }
+        });
+        renderHWGeography();
+        return `<span class="ok">DataUSA: refreshed ${updated} states (unemployment).</span>`;
+      } catch (e) {
+        return `<span class="fail">DataUSA: ${e.message}</span>`;
+      }
+    })());
+  }
+
+  // College Scorecard — sample call to verify key
+  const scKey = ($('#hwScoreCardKey').value || '').trim();
+  if (scKey) {
+    refreshes.push((async () => {
+      try {
+        // Fetch a tiny sample to verify connectivity
+        const r = await fetch(`https://api.data.gov/ed/collegescorecard/v1/schools?api_key=${encodeURIComponent(scKey)}&per_page=1&fields=id,school.name`);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        await r.json();
+        return `<span class="ok">College Scorecard: connectivity OK. Live earnings refresh available (not yet wired per-major).</span>`;
+      } catch (e) {
+        return `<span class="fail">College Scorecard: ${e.message}</span>`;
+      }
+    })());
+  }
+
+  // BLS — best-effort smoke test
+  const blsKey = ($('#hwBLSKey').value || '').trim();
+  if (blsKey) {
+    refreshes.push((async () => {
+      try {
+        const r = await fetch('https://api.bls.gov/publicAPI/v2/timeseries/data/', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({seriesid:['LNS14000000'], registrationkey: blsKey})
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        await r.json();
+        return `<span class="ok">BLS: CORS permitted for LAUS sample.</span>`;
+      } catch (e) {
+        return `<span class="fail">BLS: ${e.message} (likely CORS — typical for static pages)</span>`;
+      }
+    })());
+  }
+
+  if (refreshes.length === 0) {
+    status.innerHTML = 'No sources enabled. Toggle DataUSA or paste a key above, then click Refresh.';
+    return;
+  }
+
+  const results = await Promise.all(refreshes);
+  status.innerHTML = results.join('<br>');
+}
+
+/* ============================================================
    11. INIT
    ============================================================ */
 window.addEventListener('DOMContentLoaded', () => {
@@ -2915,6 +4406,7 @@ window.addEventListener('DOMContentLoaded', () => {
   wireSim();
   wirePhillips();
   wireAI();
+  wireHelpWanted();
 });
 
 /* Handle resize for scatters & chart re-renders */
@@ -2927,6 +4419,7 @@ window.addEventListener('resize', () => {
     if (active.id === 'panel-history') renderHistory();
     if (active.id === 'panel-phillips') renderScatters();
     if (active.id === 'panel-forecast') runForecast();
+    if (active.id === 'panel-helpwanted') renderHelpWanted();
   }, 200);
 });
 </script>
