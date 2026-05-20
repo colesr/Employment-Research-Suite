@@ -118,24 +118,27 @@
   nav.tabs button {
     background: none; border: none;
     font-family: 'Fraunces', serif;
-    font-size: 15px;
-    padding: 14px 22px 14px 0;
-    margin-right: 28px;
+    font-size: 14.5px;
+    padding: 14px 10px;
+    margin: 0;
     color: var(--mute);
     cursor: pointer;
     position: relative;
     transition: color .3s ease;
     white-space: nowrap;
     letter-spacing: 0.005em;
+    flex: 1 1 0;
+    min-width: max-content;
+    text-align: center;
   }
   nav.tabs button .nm { font-family: 'JetBrains Mono', monospace; font-size: 10px; vertical-align: super; margin-right: 6px; color: var(--accent); }
   nav.tabs button:hover { color: var(--ink); }
   nav.tabs button.on { color: var(--ink); font-style: italic; }
   nav.tabs button.on::after {
-    content: ''; position: absolute; bottom: -1px; left: 0; right: 28px;
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
     height: 2px; background: var(--accent);
     animation: drawLine .5s cubic-bezier(.2,.7,.2,1) forwards;
-    transform-origin: left;
+    transform-origin: center;
   }
   @keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
