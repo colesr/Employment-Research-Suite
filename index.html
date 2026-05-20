@@ -140,6 +140,25 @@
     animation: drawLine .5s cubic-bezier(.2,.7,.2,1) forwards;
     transform-origin: center;
   }
+  /* AI tab — sits at the right edge as a persistent tool, distinct from the
+     content tabs. Don't grow with flex; thin vertical rule on the left
+     signals it's separable from the navigation panel. */
+  nav.tabs button.ai-tab {
+    flex: 0 0 auto;
+    margin-left: auto;
+    padding-left: 22px;
+    padding-right: 16px;
+  }
+  nav.tabs button.ai-tab::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 22%;
+    bottom: 22%;
+    width: 1px;
+    background: var(--rule);
+  }
+  nav.tabs button.ai-tab:hover::before { background: var(--ink-soft); }
   @keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
   /* === Panel system === */
@@ -1338,8 +1357,8 @@
     <button data-tab="forecast"><span class="nm">iv.</span>Forecasting</button>
     <button data-tab="phillips"><span class="nm">v.</span>Empirical Curves</button>
     <button data-tab="theory"><span class="nm">vi.</span>Methodology</button>
-    <button data-tab="ai" id="aiTabBtn"><span class="nm">vii.</span>AI<span class="ai-dot" aria-hidden="true"></span></button>
-    <button data-tab="helpwanted"><span class="nm">viii.</span>Help Wanted</button>
+    <button data-tab="helpwanted"><span class="nm">vii.</span>Help Wanted</button>
+    <button data-tab="ai" id="aiTabBtn" class="ai-tab"><span class="nm">viii.</span>AI<span class="ai-dot" aria-hidden="true"></span></button>
   </nav>
 
   <!-- ============== PANEL: OVERVIEW ============== -->
@@ -1598,23 +1617,23 @@
   <!-- ============== PANEL: HELP WANTED ============== -->
   <section class="panel" id="panel-helpwanted">
     <div class="hw-banner">
-      <div class="vintage">Issue No. 8<br/>The Pipeline Edition</div>
-      <div class="kicker">§ VIII · The human capital pipeline</div>
+      <div class="vintage">Issue No. 7<br/>The Pipeline Edition</div>
+      <div class="kicker">§ VII · The human capital pipeline</div>
       <h2><em>Help</em> Wanted.</h2>
       <div class="tag">From the classroom to the cubicle to the corner office. An interactive accounting of how Americans become workers — what they study, where they land, and which jobs the economy keeps asking for.</div>
     </div>
 
-    <!-- § VIII.A — The Posting -->
+    <!-- § VII.A — The Posting -->
     <div class="hw-section" id="hw-posting">
-      <div class="label">§ VIII.A &nbsp;·&nbsp; Now hiring</div>
+      <div class="label">§ VII.A &nbsp;·&nbsp; Now hiring</div>
       <h3 class="sub" style="margin-bottom:6px;">The fastest-growing occupations of the <em>decade ahead</em>.</h3>
       <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">Click a posting to see which majors feed into it, and how the wage trajectory unfolds in the Journey section below. Growth percentages and openings are BLS Employment Projections through 2033; wages are 2023 OEWS medians.</p>
       <div class="hw-posters" id="hwPosters"></div>
     </div>
 
-    <!-- § VIII.B — The Pipeline -->
+    <!-- § VII.B — The Pipeline -->
     <div class="hw-section" id="hw-pipeline">
-      <div class="label">§ VIII.B &nbsp;·&nbsp; The pipeline</div>
+      <div class="label">§ VII.B &nbsp;·&nbsp; The pipeline</div>
       <h3 class="sub" style="margin-bottom:6px;">Bachelor's degrees conferred, <em>by field</em>.</h3>
       <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">U.S. bachelor's degree production by broad field, 2010 to 2022. The boom in computer science, the secular decline in education, and the steady rise of the health professions are the period's three loudest stories. Source: NCES Digest of Education Statistics, Table 322.10.</p>
       <div class="chart-wrap hw-pipeline">
@@ -1627,9 +1646,9 @@
       </div>
     </div>
 
-    <!-- § VIII.C — The Geography -->
+    <!-- § VII.C — The Geography -->
     <div class="hw-section" id="hw-geography">
-      <div class="label">§ VIII.C &nbsp;·&nbsp; The geography</div>
+      <div class="label">§ VII.C &nbsp;·&nbsp; The geography</div>
       <h3 class="sub" style="margin-bottom:6px;">A view from the <em>states</em>.</h3>
       <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">A choropleth tile cartogram of the United States, sized to give each state equal visual weight regardless of geographic area — useful for labor-market metrics that don't track with acreage. Click a state for details. Sources: BLS LAUS, BLS OEWS, NCES, Census ACS.</p>
 
@@ -1664,9 +1683,9 @@
       </div>
     </div>
 
-    <!-- § VIII.D — The Journey -->
+    <!-- § VII.D — The Journey -->
     <div class="hw-section" id="hw-journey">
-      <div class="label">§ VIII.D &nbsp;·&nbsp; The journey</div>
+      <div class="label">§ VII.D &nbsp;·&nbsp; The journey</div>
       <h3 class="sub" style="margin-bottom:6px;">A <em>life</em>, in three charts.</h3>
       <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">Pick a major. We'll show you where its graduates actually end up working (ACS Field-of-Degree data), how their wages evolve over twenty years (College Scorecard + ACS), and how often they stay in the field they trained for. Toggle compare-mode to overlay a second major.</p>
 
@@ -1697,9 +1716,9 @@
       </div>
     </div>
 
-    <!-- § VIII.E — Supply & Demand -->
+    <!-- § VII.E — Supply & Demand -->
     <div class="hw-section" id="hw-supply-demand">
-      <div class="label">§ VIII.E &nbsp;·&nbsp; Supply &amp; demand</div>
+      <div class="label">§ VII.E &nbsp;·&nbsp; Supply &amp; demand</div>
       <h3 class="sub" style="margin-bottom:6px;">Where the <em>shortages</em> are.</h3>
       <p class="lede" style="font-size:15px; max-width:680px; margin-bottom:18px;">A log-log scatter of annual projected job openings against annual U.S. bachelor's-degree production for each broad field. Points <em>above</em> the diagonal: more graduates than jobs (oversupply). Points <em>below</em>: more jobs than graduates (shortage). Hover any point for details.</p>
       <div class="hw-sd-wrap">
@@ -1712,7 +1731,7 @@
       </div>
     </div>
 
-    <!-- § VIII.F — Live data -->
+    <!-- § VII.F — Live data -->
     <details class="hw-live" id="hwLive">
       <summary>Live data refresh <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mute);letter-spacing:0.14em;text-transform:uppercase;">offline-friendly · keys optional</span></summary>
       <div class="live-grid">
@@ -1762,7 +1781,7 @@
 <div class="ai-backdrop" id="aiBackdrop" aria-hidden="true"></div>
 <aside class="ai-panel" id="aiPanel" role="dialog" aria-modal="false" aria-labelledby="aiPanelTitle">
   <div class="ai-head">
-    <div class="vol">§ VII · Auxiliary instrument</div>
+    <div class="vol">§ VIII · Auxiliary instrument</div>
     <h3 id="aiPanelTitle">An <em>economic interpreter</em>.</h3>
     <div class="sub">A retrieval-grounded assistant with deep knowledge of every panel, slider, equation, preset, and historical episode in this suite. Ask anything — including <em>why</em> a number behaves the way it does.</div>
     <button class="ai-close" id="aiClose" aria-label="Close AI panel">×</button>
@@ -3107,16 +3126,16 @@ const KB = [
 
   {id:'meta-tabs', title:'Navigating the platform',
    tags:['tabs','navigation','sections','how to use','where to find','panels overview'],
-   body:"Seven main tabs plus this AI assistant:\n- **i. Overview** — present-moment snapshot with stats and sparklines.\n- **ii. Historical Series** — dual-axis viewer for cross-referencing any two macro variables.\n- **iii. Variable Simulator** — calibrated structural model with 16 sliders and 4 historical presets.\n- **iv. Forecasting** — conditional unemployment forecasts under chosen shocks.\n- **v. Empirical Curves** — Phillips curve and Okun's law scatters with decade-by-decade era selector.\n- **vi. Methodology** — formal documentation of every equation and citation.\n- **vii. AI** — this conversational assistant for deep-dive explanations.\n- **viii. Help Wanted** — the human-capital pipeline: graduates by major, top occupations, state-level metrics, career trajectories, supply/demand by field.\n\nThe AI panel slides over the current view; closing it returns you to whatever tab was previously active."},
+   body:"Seven content tabs plus an always-available AI assistant on the far right:\n- **i. Overview** — present-moment snapshot with stats and sparklines.\n- **ii. Historical Series** — dual-axis viewer for cross-referencing any two macro variables.\n- **iii. Variable Simulator** — calibrated structural model with 16 sliders and 4 historical presets.\n- **iv. Forecasting** — conditional unemployment forecasts under chosen shocks.\n- **v. Empirical Curves** — Phillips curve and Okun's law scatters with decade-by-decade era selector.\n- **vi. Methodology** — formal documentation of every equation and citation.\n- **vii. Help Wanted** — the human-capital pipeline: graduates by major, top occupations, state-level metrics, career trajectories, supply/demand by field.\n- **viii. AI** (rightmost, separated by a vertical rule) — this conversational assistant. Opens as a slide-out overlay rather than swapping panels, so it's available while you're navigating any other section. Closing it returns you to whatever tab was previously active."},
 
   /* ============ HELP WANTED ============ */
-  {id:'hw-panel', title:'The Help Wanted panel (§ VIII)',
-   tags:['help wanted','panel viii','viii','human capital','pipeline','careers','jobs','occupations','journey','graduates'],
-   body:"The **Help Wanted panel** is the platform's human-capital-pipeline section. Where the rest of the platform asks 'what's happening to unemployment?', this one asks 'who are the workers, and how did they get here?'. It has five sub-sections:\n- **§ VIII.A — The Posting**: 18 fast-growth and large-base occupations from BLS Employment Projections 2023–2033, rendered as torn-poster cards with growth %, projected annual openings, median wage, and entry-level education. Click a posting to drill into the Journey section for its feeder major.\n- **§ VIII.B — The Pipeline**: stacked-area chart of bachelor's degrees conferred by 10 broad fields, 2010–2022 (NCES Digest of Education Statistics).\n- **§ VIII.C — The Geography**: a tile cartogram of the 50 states + DC with a metric selector (unemployment, LFP, openings/1K, bachelor's/1K, median wage). Click a state for its full numbers.\n- **§ VIII.D — The Journey**: career-trajectory explorer with major selector, compare-mode toggle, top-occupations bars, wage-curve chart, and 10-year persistence rate.\n- **§ VIII.E — Supply & Demand**: log-log scatter of annual openings vs. annual graduates by field, with a diagonal supply-equals-demand reference line.\n\nThere's also a collapsible **§ VIII.F — Live data** section: paste a College Scorecard or BLS API key and the page will refresh embedded snapshots in place. DataUSA refresh works without a key."},
+  {id:'hw-panel', title:'The Help Wanted panel (§ VII)',
+   tags:['help wanted','panel vii','vii','human capital','pipeline','careers','jobs','occupations','journey','graduates'],
+   body:"The **Help Wanted panel** is the platform's human-capital-pipeline section. Where the rest of the platform asks 'what's happening to unemployment?', this one asks 'who are the workers, and how did they get here?'. It has five sub-sections:\n- **§ VII.A — The Posting**: 18 fast-growth and large-base occupations from BLS Employment Projections 2023–2033, rendered as torn-poster cards with growth %, projected annual openings, median wage, and entry-level education. Click a posting to drill into the Journey section for its feeder major.\n- **§ VII.B — The Pipeline**: stacked-area chart of bachelor's degrees conferred by 10 broad fields, 2010–2022 (NCES Digest of Education Statistics).\n- **§ VII.C — The Geography**: a tile cartogram of the 50 states + DC with a metric selector (unemployment, LFP, openings/1K, bachelor's/1K, median wage). Click a state for its full numbers.\n- **§ VII.D — The Journey**: career-trajectory explorer with major selector, compare-mode toggle, top-occupations bars, wage-curve chart, and 10-year persistence rate.\n- **§ VII.E — Supply & Demand**: log-log scatter of annual openings vs. annual graduates by field, with a diagonal supply-equals-demand reference line.\n\nThere's also a collapsible **§ VII.F — Live data** section: paste a College Scorecard or BLS API key and the page will refresh embedded snapshots in place. DataUSA refresh works without a key."},
 
   {id:'hw-posting', title:'The Posting — fastest-growing occupations',
    tags:['posting','postings','jobs','occupations','growth','fastest growing','bls projections','employment projections','help wanted poster'],
-   body:"The Posting section shows 18 occupations selected for either high projected growth or large base employment, from the BLS Employment Projections 2023–2033 release. Each poster card displays:\n- **Occupation name** and its SOC (Standard Occupational Classification) code.\n- **Growth %**: change in total employment 2023→2033. Green badge ≥25%, blue 12–24%, grey <12%.\n- **Median annual wage**: 2023 OEWS figure.\n- **Annual openings**: BLS's combined net change + replacement-need figure.\n- **2023 employment** in thousands.\n- **Entry-level education**: BLS's 'typical entry-level education' field (HS, postsecondary cert, associate's, bachelor's, master's, doctoral).\n- **Feeder major**: the most common bachelor's-degree field for entrants.\n\nClicking any card switches the Journey explorer (§ VIII.D) to that occupation's feeder major and scrolls to it."},
+   body:"The Posting section shows 18 occupations selected for either high projected growth or large base employment, from the BLS Employment Projections 2023–2033 release. Each poster card displays:\n- **Occupation name** and its SOC (Standard Occupational Classification) code.\n- **Growth %**: change in total employment 2023→2033. Green badge ≥25%, blue 12–24%, grey <12%.\n- **Median annual wage**: 2023 OEWS figure.\n- **Annual openings**: BLS's combined net change + replacement-need figure.\n- **2023 employment** in thousands.\n- **Entry-level education**: BLS's 'typical entry-level education' field (HS, postsecondary cert, associate's, bachelor's, master's, doctoral).\n- **Feeder major**: the most common bachelor's-degree field for entrants.\n\nClicking any card switches the Journey explorer (§ VII.D) to that occupation's feeder major and scrolls to it."},
 
   {id:'hw-pipeline-sec', title:'The Pipeline — degrees by field',
    tags:['pipeline section','degrees by field','bachelors over time','nces','degree production','stacked area','cs boom','education decline'],
