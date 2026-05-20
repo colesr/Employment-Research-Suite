@@ -524,6 +524,325 @@
     gap: 28px;
   }
   @media (max-width: 900px){ .forecast-grid { grid-template-columns: 1fr; } }
+
+  /* ============== AI ASSISTANT PANEL ============== */
+  .ai-dot {
+    display: inline-block;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    margin-left: 8px;
+    vertical-align: middle;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .ai-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(20,17,15,0.18);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+  }
+  .ai-backdrop.on { opacity: 1; pointer-events: auto; }
+
+  .ai-panel {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: min(520px, 100vw);
+    background: var(--paper-warm);
+    border-left: 1px solid var(--ink);
+    box-shadow: -12px 0 36px -8px rgba(20,17,15,0.18);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform .45s cubic-bezier(.2,.7,.2,1);
+  }
+  .ai-panel.on { transform: translateX(0); }
+
+  .ai-panel::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    opacity: .45; mix-blend-mode: multiply;
+  }
+
+  .ai-head {
+    padding: 22px 26px 16px;
+    border-bottom: 1px solid var(--ink);
+    position: relative;
+    z-index: 1;
+    background: var(--paper-warm);
+  }
+  .ai-head .vol {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .ai-head h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .ai-head h3 em { font-style: italic; color: var(--accent); }
+  .ai-head .sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+  .ai-close {
+    position: absolute;
+    top: 18px; right: 18px;
+    background: none;
+    border: 1px solid var(--rule);
+    width: 30px; height: 30px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--ink-soft);
+    transition: all .2s ease;
+    display: inline-flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .ai-close:hover { border-color: var(--accent); color: var(--accent); }
+
+  .ai-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 26px 8px;
+    position: relative;
+    z-index: 1;
+    scroll-behavior: smooth;
+  }
+  .ai-body::-webkit-scrollbar { width: 6px; }
+  .ai-body::-webkit-scrollbar-track { background: transparent; }
+  .ai-body::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+  .ai-msg {
+    margin-bottom: 18px;
+    animation: rise .4s cubic-bezier(.2,.7,.2,1) both;
+    max-width: 100%;
+  }
+  .ai-msg.user {
+    margin-left: auto;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    max-width: 78%;
+    width: fit-content;
+    border-radius: 1px;
+  }
+  .ai-msg.bot {
+    background: transparent;
+    border-left: 2px solid var(--accent);
+    padding: 4px 0 8px 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .ai-msg.bot .ai-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .ai-msg.bot p { margin-bottom: 8px; }
+  .ai-msg.bot p:last-child { margin-bottom: 0; }
+  .ai-msg.bot ul { padding-left: 18px; margin: 4px 0 8px; }
+  .ai-msg.bot li { margin-bottom: 3px; }
+  .ai-msg.bot code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--paper-deep);
+    padding: 1px 5px;
+    color: var(--ink);
+  }
+  .ai-msg.bot em { font-style: italic; color: var(--ink); }
+  .ai-msg.bot strong { font-weight: 600; color: var(--ink); }
+  .ai-msg.bot .ai-eq {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--paper-deep);
+    border-left: 2px solid var(--ink);
+    padding: 6px 10px;
+    margin: 8px 0;
+  }
+
+  .ai-related {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--rule);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+  }
+  .ai-related-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 6px;
+  }
+  .ai-chip {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: 0;
+    padding: 4px 10px;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .ai-chip:hover { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+
+  .ai-suggestions {
+    margin-bottom: 18px;
+  }
+  .ai-suggestions .label {
+    margin-bottom: 8px;
+  }
+  .ai-suggestions .ai-chip { font-size: 12px; }
+
+  .ai-foot {
+    border-top: 1px solid var(--rule);
+    padding: 14px 22px 18px;
+    background: var(--paper-warm);
+    position: relative;
+    z-index: 1;
+  }
+  .ai-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .ai-input {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--ink);
+    outline: none;
+    resize: none;
+    min-height: 42px;
+    max-height: 120px;
+    line-height: 1.4;
+  }
+  .ai-input:focus { border-color: var(--accent); }
+  .ai-send {
+    background: var(--accent);
+    color: var(--paper);
+    border: 1px solid var(--accent);
+    padding: 0 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+  }
+  .ai-send:hover { background: var(--ink); border-color: var(--ink); }
+  .ai-send:disabled { opacity: .4; cursor: not-allowed; }
+
+  .ai-status {
+    font-size: 10px;
+    color: var(--mute);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .ai-status .mode-toggle {
+    color: var(--accent);
+    cursor: pointer;
+    background: none; border: none;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    font-size: 10px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 0;
+  }
+  .ai-status .mode-toggle:hover { color: var(--ink); }
+
+  .ai-settings {
+    display: none;
+    padding-top: 12px;
+    margin-top: 10px;
+    border-top: 1px dashed var(--rule);
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .ai-settings.on { display: block; }
+  .ai-settings label {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 9.5px;
+    color: var(--mute);
+    margin-bottom: 4px;
+    margin-top: 8px;
+  }
+  .ai-settings input[type="password"] {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 7px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    outline: none;
+  }
+  .ai-settings input[type="password"]:focus { border-color: var(--accent); }
+  .ai-settings .warn {
+    font-style: italic;
+    font-size: 10.5px;
+    margin-top: 8px;
+    color: var(--mute);
+  }
+
+  .ai-thinking {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--mute);
+    font-style: italic;
+  }
+  .ai-thinking::after {
+    content: '...';
+    animation: dotty 1.4s steps(4, end) infinite;
+  }
+  @keyframes dotty {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+  }
+
+  @media (max-width: 600px) {
+    .ai-panel { width: 100vw; border-left: none; }
+    .ai-head { padding: 18px 20px 14px; }
+    .ai-body { padding: 14px 20px 8px; }
+    .ai-foot { padding: 12px 18px 16px; }
+  }
 </style>
 </head>
 <body>
@@ -552,6 +871,7 @@
     <button data-tab="forecast"><span class="nm">iv.</span>Forecasting</button>
     <button data-tab="phillips"><span class="nm">v.</span>Empirical Curves</button>
     <button data-tab="theory"><span class="nm">vi.</span>Methodology</button>
+    <button data-tab="ai" id="aiTabBtn"><span class="nm">vii.</span>AI<span class="ai-dot" aria-hidden="true"></span></button>
   </nav>
 
   <!-- ============== PANEL: OVERVIEW ============== -->
@@ -820,6 +1140,53 @@
 </div>
 
 <div class="tip" id="tip"></div>
+
+<!-- ============== AI ASSISTANT PANEL ============== -->
+<div class="ai-backdrop" id="aiBackdrop" aria-hidden="true"></div>
+<aside class="ai-panel" id="aiPanel" role="dialog" aria-modal="false" aria-labelledby="aiPanelTitle">
+  <div class="ai-head">
+    <div class="vol">§ VII · Auxiliary instrument</div>
+    <h3 id="aiPanelTitle">An <em>economic interpreter</em>.</h3>
+    <div class="sub">A retrieval-grounded assistant with deep knowledge of every panel, slider, equation, preset, and historical episode in this suite. Ask anything — including <em>why</em> a number behaves the way it does.</div>
+    <button class="ai-close" id="aiClose" aria-label="Close AI panel">×</button>
+  </div>
+  <div class="ai-body" id="aiBody">
+    <div class="ai-suggestions" id="aiSuggestions">
+      <div class="label">Try a question</div>
+      <div class="ai-related-chips">
+        <button class="ai-chip" data-q="What does the Variable Simulator do, and how do its channels combine?">How does the simulator work?</button>
+        <button class="ai-chip" data-q="Explain Okun's law and how it appears in this platform.">Explain Okun's law</button>
+        <button class="ai-chip" data-q="What is the natural rate of unemployment and why is it 4.5% here?">What's the natural rate?</button>
+        <button class="ai-chip" data-q="Why did the Phillips curve break down in the 1970s?">Phillips curve in the 1970s</button>
+        <button class="ai-chip" data-q="How does the AR(1) forecasting method work, and how are confidence bands computed?">AR(1) forecasting</button>
+        <button class="ai-chip" data-q="What happens when I apply the 2008 recession preset?">2008 recession preset</button>
+        <button class="ai-chip" data-q="What does the skills mismatch slider represent and why does it have the largest weight?">Skills mismatch slider</button>
+        <button class="ai-chip" data-q="Where does the data come from and how is it sourced?">Data sources</button>
+      </div>
+    </div>
+  </div>
+  <div class="ai-foot">
+    <div class="ai-input-row">
+      <textarea class="ai-input" id="aiInput" placeholder="Ask about any panel, slider, equation, or historical episode…" rows="1"></textarea>
+      <button class="ai-send" id="aiSend">Send</button>
+    </div>
+    <div class="ai-status">
+      <span id="aiModeLabel">Mode: <span style="color:var(--ink);">local knowledge base</span></span>
+      <button class="mode-toggle" id="aiSettingsToggle">Settings ▾</button>
+    </div>
+    <div class="ai-settings" id="aiSettings">
+      <label for="aiApiKey">Anthropic API key (optional)</label>
+      <input type="password" id="aiApiKey" placeholder="sk-ant-…" autocomplete="off" />
+      <label for="aiModel">Model</label>
+      <select class="fld" id="aiModel" style="width:100%;">
+        <option value="claude-sonnet-4-5">Claude Sonnet 4.5 (recommended)</option>
+        <option value="claude-opus-4-5">Claude Opus 4.5</option>
+        <option value="claude-haiku-4-5">Claude Haiku 4.5 (fastest)</option>
+      </select>
+      <p class="warn">When a key is set, queries are sent directly from your browser to <code>api.anthropic.com</code> with the full knowledge base as system context. The key is stored only in this browser's local storage. Never paste a shared key. Leave blank to use the offline knowledge base.</p>
+    </div>
+  </div>
+</aside>
 
 <script>
 'use strict';
@@ -1810,7 +2177,12 @@ function wireTabs(){
   $('#tabs').addEventListener('click', e => {
     const btn = e.target.closest('button');
     if (!btn) return;
-    $$('#tabs button').forEach(b => b.classList.remove('on'));
+    // The AI tab is an overlay, not a panel — handle separately.
+    if (btn.dataset.tab === 'ai') {
+      openAIPanel();
+      return;
+    }
+    $$('#tabs button').forEach(b => { if (b.dataset.tab !== 'ai') b.classList.remove('on'); });
     btn.classList.add('on');
     $$('.panel').forEach(p => p.classList.remove('on'));
     $('#panel-' + btn.dataset.tab).classList.add('on');
@@ -1862,7 +2234,675 @@ function setDates(){
 }
 
 /* ============================================================
-   10. INIT
+   10. AI ASSISTANT — Knowledge base + chat engine
+   ============================================================ */
+const KB = [
+  /* ============ PANELS ============ */
+  {id:'panel-overview', title:'The Overview panel (§ I)',
+   tags:['overview','panel i','dashboard','front page','first tab','stats','sparklines','vital signs'],
+   body:"The **Overview panel** opens with a five-column stat row — unemployment, real GDP growth, the federal funds rate, CPI inflation, and labor-force participation — each animated in via a tickering count from zero. The arrows and color cues use an *invert* flag: for unemployment and inflation, falling is good (positive color); for GDP and participation, rising is good. Below, five sparklines plot the same series from 1960 to 2024. The large chart shows U.S. civilian unemployment with NBER recessions shaded in grey and a dashed reference line at the natural rate (4.5%). Four notable annotations fade in 1.4 seconds after the main line draws: Volcker disinflation (1982 peak), the Great Financial Crisis (2009), the pandemic spike (2020), and the tight 1969 labor market.\n\nThe count-up animation uses a cubic ease-out over 900ms. Sparkline paths use `stroke-dasharray` with `getTotalLength()` for a left-to-right draw, staggered by 150ms per card."},
+
+  {id:'panel-history', title:'The Historical Series viewer (§ III)',
+   tags:['history','historical','panel ii','viewer','dual axis','two series','cross-reference','compare','correlation'],
+   body:"The **Historical Series viewer** lets you overlay any two of the five embedded series on a twin-axis chart between any two years from 1960 to 2024. The left axis (red) tracks the primary series; the right axis (teal) tracks the secondary. The correlation coefficient in the upper-right is computed across only the *visible* window, so changing the year range will change *r*.\n\nClassic pairs to try:\n- **Unemployment & GDP growth** — Okun's law (strongly negative *r*).\n- **Unemployment & CPI inflation** — the Phillips curve, including its 1970s breakdown (the sign flips by decade).\n- **Fed funds & Unemployment** — monetary transmission, with a characteristic 12-to-18-month lag that is more visible if you shift the series mentally.\n- **LFP & Unemployment** — captures the discouraged-worker effect; participation falls during recessions.\n\nNote that the chart normalizes the two y-scales independently, so the relative *levels* are not directly comparable — only the co-movement is."},
+
+  {id:'panel-simulator', title:'The Variable Simulator (§ IV)',
+   tags:['simulator','panel iv','sliders','shock','perturb','steady state','model','channels','calibrated','decomposition'],
+   body:"The **Variable Simulator** is the platform's calibrated structural model. Each of the 16 sliders represents a shock to a single variable, holding the others at their long-run baselines. The model computes a steady-state prediction for the unemployment rate as:\n\n*u = u\\* + Σ coeff_i × (state_i − baseline_i)*\n\nwhere u\\* = 4.5% is the natural rate. Contributions are bucketed into three channels — **cyclical**, **structural**, and **frictional** — and shown as a decomposition bar chart on the right. The result card animates a count-up to the new predicted u and tints the corner glow red (shock-up) or green (shock-down).\n\nFour preset buttons inject historical configurations: *2008 Recession*, *1970s Stagflation*, *Late-1990s Boom*, and *2020 Pandemic*. The Reset button returns every slider to its baseline (which collapses the prediction back to 4.5%). Because the model is linear, doubling a slider's deviation roughly doubles its contribution — there are no thresholds, saturations, or interactions between variables."},
+
+  {id:'panel-forecast', title:'The Forecasting panel (§ V)',
+   tags:['forecast','forecasting','panel v','prediction','impulse','scenario','horizon','confidence band','irf','ar1'],
+   body:"The **Forecasting panel** projects unemployment 4–20 quarters into the future under a chosen single-variable shock. The forecast has two pieces summed quarter-by-quarter: (1) a univariate **baseline** built from the historical annual series — choose AR(1), naive persistence, linear trend, or Holt exponential smoothing; (2) a structural **impulse response** drawn from the calibrated model, scaled by the magnitude slider.\n\nImpulse-response profiles are damped and bell-shaped. Monetary shocks peak around quarter 4 (the 12-month transmission lag from Romer & Romer); fiscal and confidence shocks peak around quarter 2; productivity shocks build slowly and persist. Confidence bands inflate by √h where h is the horizon, using the empirical standard deviation of the historical residuals and a z-multiplier (1.282 for 80%, 1.645 for 90%, 1.96 for 95%).\n\nThe stat row beneath the chart reports peak unemployment, end-of-horizon level vs. baseline, and a cumulative shock effect (sum of deviations from the no-shock path, in percentage-point-quarters)."},
+
+  {id:'panel-phillips', title:'The Empirical Curves panel (§ VI)',
+   tags:['phillips','okun','panel vi','scatter','empirical curves','regression','era','decade','slope','beta'],
+   body:"The **Empirical Curves panel** shows the two most-cited stylized facts of macroeconomics as scatter plots, each with a fitted OLS line:\n\n- **Okun's Law** (left): ΔUnemployment versus real GDP growth. A downward-sloping line is the canonical result — typical β ≈ −0.4 to −0.5 in U.S. post-war annual data. Below-trend growth raises unemployment; above-trend growth lowers it.\n- **Phillips Curve** (right): CPI inflation versus the unemployment level. Originally negative-sloped (Phillips, 1958), the relationship inverted and flattened in different decades.\n\nThe **era selector** below the charts is the key feature: switch between all years, the 1960s, the 1970s (stagflation — Phillips curve breaks), the 1980s (Volcker), the 1990s (Great Moderation — Phillips curve flattens), the 2000s, the 2010s, or the 2020s. Watch the slope coefficient β re-compute as you change era — this is the most direct visualization of *parameter instability*, which is why neither relationship can be relied on for forecasting."},
+
+  {id:'panel-theory', title:'The Methodology panel (§ VII)',
+   tags:['theory','methodology','panel vii','notes','equations','sources','natural rate framework','data provenance'],
+   body:"The **Methodology panel** documents every equation behind the simulator and forecasting tools, with academic citations. Key references invoked:\n- Okun (1962) — the −0.45 cyclical coefficient on GDP growth.\n- Romer & Romer (2004) — narrative monetary shocks, source of the 0.15 elasticity on the federal funds rate with a four-quarter lag.\n- Blanchard & Leigh (2013) — fiscal multipliers, source of the −0.20 coefficient on the government spending share.\n- Cengiz, Dube, Lindner, Zipperer (2019) — minimum wage bunching estimator (small employment effects).\n- Autor, Dorn, Hanson (2013) — China-shock trade elasticities.\n- Card, Chetty, Weber (2007) — unemployment benefit duration elasticities.\n- Molloy, Smith, Wozniak (2011) — geographic mobility decline.\n\nThe panel also lists the FRED series identifiers (UNRATE, A191RL1A225NBEA, FEDFUNDS, CPIAUCSL, CIVPART), and explicitly disclaims that the model is *linear and time-invariant* where the real economy is neither. It does not handle the zero lower bound, hysteresis, financial-crisis nonlinearities, or simultaneity."},
+
+  /* ============ SERIES ============ */
+  {id:'series-unemp', title:'Unemployment Rate (UNRATE)',
+   tags:['unemployment','unrate','jobless','u-rate','unemp','civilian unemployment'],
+   body:"The **civilian unemployment rate** is the BLS's U-3 measure: the share of the civilian labor force that is jobless, actively searching, and available to work, expressed as a percentage. Values shown are annual averages from FRED series **UNRATE**.\n\nKey episodes visible in the embedded data: 9.7% (1982, Volcker disinflation peak), 9.6% (2010, post-GFC peak), 8.1% (2020, COVID-19), 3.5% (1969 and 2019, tight labor markets), 2.5% (1953, not in our window). The natural-rate reference line at 4.5% reflects the CBO's current decade estimate of NAIRU. U-3 understates joblessness during deep recessions because it excludes marginally attached and part-time-for-economic-reasons workers; broader U-6 typically runs 4–5 percentage points higher at cycle troughs."},
+
+  {id:'series-gdp', title:'Real GDP growth (A191RL1A225NBEA)',
+   tags:['gdp','real gdp','output','growth','recession indicator','a191rl'],
+   body:"**Real GDP growth** is the year-over-year change in inflation-adjusted gross domestic product, from FRED series **A191RL1A225NBEA**. Negative values shown in the data correspond to: −0.5% (1974), −0.2% (1975), −0.3% (1980), −1.8% (1982), −0.1% (1991), −2.6% (2009), −2.2% (2020). Trend growth (g\\*) is taken at 2.0% throughout the simulator — this is roughly the post-2000 U.S. potential growth rate, lower than the ~3% trend of the 1960s–1990s due to slowing labor force growth and productivity deceleration.\n\nIn Okun's law form, deviations from g\\* drive cyclical unemployment with a slope of −0.45. The CBO and IMF generally use trend growth estimates in the 1.8–2.1% range for the current decade."},
+
+  {id:'series-fed', title:'Federal Funds Rate (FEDFUNDS)',
+   tags:['fed funds','federal reserve','interest rates','monetary policy','rate hikes','fomc','fedfunds'],
+   body:"The **effective federal funds rate** is the interest rate at which depository institutions lend reserves to each other overnight — the Fed's main policy instrument since the late 1980s (before that it was managed via reserve-quantity operations). Values are annual averages from FRED series **FEDFUNDS**.\n\nThe two most dramatic episodes in the data: 16.4% (1981, Volcker's deliberate disinflation, double the 1976 level) and effectively 0% from 2009 to 2015 (zero lower bound after the GFC). The pandemic-era rate cycle compressed roughly 4.5 years of normal tightening into 18 months (2022–2023). The simulator uses a coefficient of +0.15 on rate deviations from a 2.5% baseline, with a four-quarter transmission lag in the forecasting impulse-response profile."},
+
+  {id:'series-cpi', title:'CPI inflation (CPIAUCSL)',
+   tags:['cpi','inflation','prices','cpiaucsl','consumer price','disinflation'],
+   body:"**CPI inflation** is the year-over-year percent change in the Consumer Price Index for All Urban Consumers (FRED **CPIAUCSL**). The data captures three major regimes: the **Great Inflation** (1973–1981, peaking at 13.5% in 1980), the **Volcker disinflation** (collapsing from 13.5% to 3.2% between 1980 and 1983), and the **Great Moderation** (1984–2007, mostly 1.5–4%). Post-2020, inflation re-emerged: 8.0% (2022, the 41-year high), declining to roughly 3% by 2024.\n\nFor the Phillips curve scatter, CPI is plotted on the y-axis against unemployment on the x-axis. Change the era selector to watch the relationship flip signs in the 1970s and flatten in the 1990s."},
+
+  {id:'series-lfp', title:'Labor Force Participation (CIVPART)',
+   tags:['lfp','labor force participation','civpart','participation rate','workforce','discouraged workers'],
+   body:"**Civilian labor force participation** is the share of the working-age population (16+) that is in the labor force — employed or actively seeking work. FRED series **CIVPART**. The 1960–2024 series tells a clear three-act story: a long rise from 59% to 67% (1960–2000, driven by women entering the workforce), a plateau through the late 1990s, and a secular decline since the 2008 crisis (down to roughly 62% by 2024, partly demographic — Baby Boomer retirements — and partly cyclical-turned-structural withdrawal).\n\nIn the simulator, LFP appears as a *frictional-channel* slider with a +0.25 coefficient: higher participation mechanically lifts measured unemployment because more people are counted as job-seekers. This is one of the subtler effects in the model and explains why the unemployment rate alone is a poor measure of labor-market slack."},
+
+  /* ============ SIMULATOR VARIABLES ============ */
+  {id:'var-gdp', title:'Real GDP growth slider',
+   tags:['gdp slider','growth slider','cyclical','okun coefficient'],
+   body:"The **Real GDP Growth** slider sits in the CYCLICAL group. Baseline: 2.0% (trend, g\\*). Coefficient: **−0.45** — each percentage point of growth above trend lowers unemployment by 0.45 points via Okun's law. Range: −4% to +8%, step 0.1. Pulling to −2% (a moderate recession) raises predicted u by 1.8 points; pulling to +6% (a boom) lowers it by 1.8 points. This is the single largest cyclical lever in the model."},
+
+  {id:'var-conf', title:'Consumer Confidence slider',
+   tags:['confidence slider','consumer confidence','sentiment','cyclical','umich','conference board'],
+   body:"The **Consumer Confidence** slider applies a deviation from a normalized baseline of 0 (think Conference Board or UMich index, mean-centered). Coefficient: −0.04 per index point. Range: −30 to +30, step 1. Confidence is treated as a *leading indicator* with weaker pass-through than direct fiscal stimulus — a 20-point drop only adds 0.8 points to unemployment. This is roughly consistent with VAR evidence that sentiment shocks affect output through investment and durables purchases but with substantial decay."},
+
+  {id:'var-inv', title:'Business Investment slider',
+   tags:['investment slider','capex','business investment','capital expenditure','cyclical'],
+   body:"The **Business Investment** slider represents the percentage change in non-residential fixed investment. Coefficient: −0.10 per point. Range: −15% to +15% with step 0.5. Investment is a notably volatile component of GDP — typical recession declines exceed 10% peak-to-trough. The model treats it as a cyclical driver: a 10-point drop in investment growth raises predicted unemployment by 1.0 point."},
+
+  {id:'var-fed', title:'Federal Funds Rate slider',
+   tags:['fed slider','federal funds','interest rates','monetary','rate hikes','rate cuts'],
+   body:"The **Federal Funds Rate** slider, in the MONETARY group, applies a level deviation from a 2.5% baseline. Coefficient: **+0.15** per percentage point in the cyclical channel. Range: 0% to 12%. Tightening to 7.5% (5 points above baseline) adds 0.75 points to unemployment in steady state. In the *forecasting* panel, the same shock is dynamic — its impulse-response profile peaks at quarter 4, reflecting the 12-to-18-month monetary transmission lag documented in Romer & Romer (2004). The narrative-shocks approach there isolates exogenous Fed decisions from endogenous policy reactions."},
+
+  {id:'var-gov', title:'Government Spending slider',
+   tags:['gov slider','government spending','fiscal','fiscal multiplier','stimulus'],
+   body:"The **Government Spending** slider applies a percentage-of-GDP change (Δ) from baseline 0. Coefficient: **−0.20** per percentage point. Range: −3 to +3, step 0.1. A 1-point increase in government spending share lowers unemployment by 0.2 points in steady state. This implies an *unemployment multiplier* of roughly 0.2, which corresponds to an *output multiplier* of about 0.5 — consistent with Blanchard & Leigh's (2013) IMF forecast-error estimates. Multipliers are larger in deep recessions, but the linear model averages across regimes."},
+
+  {id:'var-tax', title:'Tax Wedge slider',
+   tags:['tax slider','tax wedge','payroll tax','income tax','labor taxes','fiscal','structural'],
+   body:"The **Tax Wedge on Labor** slider — payroll plus income taxes on labor — is in the FISCAL group but feeds the **structural** channel. Coefficient: +0.20 per percentage point of additional wedge. Range: −5 to +5. Higher labor taxes reduce both labor demand (lower net wages for firms) and labor supply (lower take-home pay), with a persistent effect on the natural rate. This elasticity is on the lower end of the OECD-based cross-country evidence."},
+
+  {id:'var-mismatch', title:'Skills Mismatch slider',
+   tags:['mismatch','skills','beveridge curve','structural','vacancy'],
+   body:"The **Skills Mismatch** slider carries the *largest single coefficient* in the structural channel: **+0.50** per index point. Range: −2 to +2, step 0.1. The weight reflects the prominence of Beveridge-curve shifts in U.S. labor markets — visible empirically as the simultaneous coexistence of elevated vacancies and elevated unemployment, especially since 2008. A 1-point increase in mismatch raises predicted unemployment by 0.5 points. Conceptually it captures gaps between the skills demanded by available jobs (often technology and credential-driven) and the skills held by available workers."},
+
+  {id:'var-minwage', title:'Real Minimum Wage slider',
+   tags:['minwage','minimum wage','wage floor','structural'],
+   body:"The **Real Minimum Wage** slider applies a percent change relative to baseline. Coefficient: +0.020 per percent — deliberately *modest*, in line with Cengiz, Dube, Lindner & Zipperer (2019), whose bunching estimator across 138 state-level minimum wage events finds small disemployment effects with high statistical confidence. A 25% real increase raises predicted u by only 0.5 points. The slider is in the STRUCTURAL group because minimum-wage effects fall more heavily on labor-market entry and on workers with the lowest reservation skills, not on aggregate employment."},
+
+  {id:'var-union', title:'Union Density slider',
+   tags:['union','union density','collective bargaining','structural','wage compression'],
+   body:"The **Union Density** slider applies a percentage-point change to union membership share. Coefficient: +0.06 per percentage point. Range: −10 to +15. Collective bargaining can lift wages above market-clearing levels and reduce employment elasticity at the margins. The coefficient is intentionally small — most of the cross-country evidence on union-density effects is mixed, with outcomes hinging strongly on bargaining centralization (coordinated bargaining like Sweden vs. fragmented bargaining like the U.S.)."},
+
+  {id:'var-import', title:'Import Penetration slider',
+   tags:['import','imports','trade','china shock','structural','autor'],
+   body:"The **Import Penetration** slider applies a percentage-point change in imports-to-domestic-consumption. Coefficient: +0.10 per percentage point. Range: −5 to +10. The calibration draws on Autor, Dorn & Hanson (2013) — *The China Syndrome* — which documents persistent local labor-market effects of import competition in U.S. manufacturing communities. The structural-channel placement is deliberate: trade shocks displace workers faster than local reallocation can absorb them, particularly in less-mobile labor markets."},
+
+  {id:'var-auto', title:'Automation Pressure slider',
+   tags:['automation','automation pressure','technology','displacement','structural'],
+   body:"The **Automation Pressure** slider applies an index deviation reflecting routine-task displacement. Coefficient: +0.30 per index point in the structural channel. Range: −2 to +3. The relatively large weight reflects evidence (Acemoglu & Restrepo, others) that automation has measurable short-run displacement effects on routine cognitive and manual occupations, even where aggregate productivity rises. The model captures only the short-run channel — long-run general-equilibrium offsets (new task creation, complementarity effects) are not modeled."},
+
+  {id:'var-ui', title:'Unemployment Insurance slider',
+   tags:['ui','unemployment insurance','benefits','replacement rate','frictional','search duration'],
+   body:"The **UI Benefit Generosity** slider applies a percentage change to the replacement rate. Coefficient: +0.015 per percent in the **frictional** channel — small. Source: Card, Chetty & Weber (2007), whose regression-discontinuity evidence on Austrian severance pay shows that benefit generosity lengthens search duration but does *not* meaningfully raise the steady-state unemployment rate. A 30% replacement-rate increase adds only 0.45 points to predicted u."},
+
+  {id:'var-mob', title:'Geographic Mobility slider',
+   tags:['mobility','geographic mobility','migration','frictional','molloy'],
+   body:"The **Geographic Mobility** slider applies a percent change to interstate migration. Coefficient: −0.008 per percent in the frictional channel (negative — more mobility *reduces* unemployment). Source: Molloy, Smith & Wozniak (2011), who document the secular decline in U.S. geographic mobility from roughly 3% interstate moves per year (1970s) to under 1.5% (2020s). The mechanism: lower mobility traps workers far from job openings, raising frictional unemployment."},
+
+  {id:'var-lfp', title:'Labor Force Participation slider',
+   tags:['lfp slider','participation','workforce','frictional'],
+   body:"The **Labor Force Participation** slider applies a percentage-point change. Coefficient: +0.25 per pp in the frictional channel. This captures a *mechanical* effect: the unemployment rate is jobless ÷ labor force. When more people enter the labor force, the denominator grows but so does the numerator (since new entrants are temporarily searching). Net effect: measured u rises in the short run. This is why participation and unemployment are not substitute measures of labor-market slack."},
+
+  {id:'var-pi_e', title:'Inflation Expectations slider',
+   tags:['inflation expectations','pi_e','expectations','prices','cyclical','accelerationist'],
+   body:"The **Inflation Expectations** slider applies a percentage-point deviation from a 2.0% baseline (the Fed's implicit anchor). Coefficient: −0.10 per pp in the cyclical channel. The negative sign captures the **short-run accelerationist** intuition: rising expectations erode real wages, which firms experience as cheaper labor, prompting more hiring. In the long run the effect reverses as nominal wages catch up — but the model captures only the short-run channel. This is also the mechanism behind the Phillips-curve scatter in §VI."},
+
+  {id:'var-prod', title:'Productivity Growth slider',
+   tags:['productivity','prod slider','total factor productivity','cyclical','ambiguous'],
+   body:"The **Productivity Growth** slider applies a percentage deviation from a 1.5% baseline. Coefficient: +0.05 per percent — small and *positive*. This sign is contested in the literature: higher productivity means less labor per unit of output (raises u) but also more aggregate output (lowers u). The model takes the labor-substitution side, weakly, reflecting evidence that the labor share has trended down during productivity surges (1990s tech, 2010s automation). The effect is intentionally small to reflect this ambiguity."},
+
+  /* ============ EQUATIONS ============ */
+  {id:'eq-okun', title:'The Okun-block equation',
+   tags:['okun equation','okun law','cyclical equation','cyclical block','δu_cyc'],
+   body:"The cyclical block of the simulator implements:\n\n**Δu_cyc = −0.45 × (g − g\\*) + 0.15 × ΔFedFunds_{t−4}**\n\nwhere g\\* is trend growth (2.0%). The first term is Okun's law in its modern (Ball-Leigh-Loungani) form. The second term captures monetary transmission with a four-quarter lag — the timing comes from Romer & Romer's narrative monetary shock dataset. The −0.45 slope is typical of post-war U.S. data; estimates vary between −0.4 and −0.5 across samples. Note that the model uses *contemporaneous* GDP growth but *lagged* federal funds, which is why a rate hike's full effect on unemployment in the forecasting panel appears around quarter 4."},
+
+  {id:'eq-fiscal', title:'The fiscal/confidence equation',
+   tags:['fiscal equation','government spending','confidence','blanchard leigh'],
+   body:"Fiscal and confidence shocks add to the cyclical channel:\n\n**Δu_cyc += −0.20 × Δgov_share − 0.08 × Δconf_idx**\n\nThe fiscal multiplier of roughly 0.5 on output (Blanchard & Leigh, 2013) translates to about 0.2 on unemployment at the one-year horizon. Confidence is a *leading* indicator with weaker pass-through, since it operates through expectations rather than direct demand. Together with the Okun and monetary terms, these comprise the model's cyclical channel."},
+
+  {id:'eq-structural', title:'The structural-block equation',
+   tags:['structural equation','mismatch','beveridge','structural unemployment block'],
+   body:"The structural block aggregates four sub-channels:\n\n**Δu_str = 0.50·mismatch + 0.10·minwage + 0.10·import + 0.20·tax_wedge**\n\nSkills mismatch carries the largest weight, reflecting the documented Beveridge-curve shifts since 2008 (vacancies and unemployment elevated together). Minimum-wage effects are deliberately modest per Cengiz et al. (2019). Import-penetration follows Autor-Dorn-Hanson. The labor tax wedge captures distortions on both labor supply and demand."},
+
+  {id:'eq-phillips-block', title:'The Phillips-block (expectations) equation',
+   tags:['phillips block','phillips equation','inflation expectations','expectations'],
+   body:"The platform's Phillips block enters through the inflation-expectations slider with a coefficient of −0.10 in the cyclical channel. The mechanism is **accelerationist**: rising expected inflation lowers real wages in the short run, which firms experience as cheaper labor, raising hiring and lowering u temporarily. In the long run nominal wages catch up and the natural rate reasserts — but the linear, time-invariant model captures only the short-run side. This is the textbook expectations-augmented Phillips curve (Friedman 1968, Phelps 1967) in steady-state form."},
+
+  /* ============ FORECASTING METHODS ============ */
+  {id:'method-ar1', title:'AR(1) forecasting method',
+   tags:['ar1','autoregressive','forecasting method','ar(1)'],
+   body:"**AR(1)** fits a first-order autoregression to the historical unemployment series: *u_t = α + ρ·u_{t−1} + ε_t*. The forecast extends by iterating *u_{t+h} = α + ρ·û_{t+h−1}*. Because unemployment is highly persistent (ρ typically 0.85–0.95 in annual data), AR(1) forecasts mean-revert *slowly* toward the unconditional mean α/(1−ρ). The residual standard deviation σ from the fit drives the confidence bands — they widen with √h. AR(1) is the platform's default forecasting baseline because it represents the simplest model that captures the well-documented inertia in labor-market conditions."},
+
+  {id:'method-naive', title:'Naive (persistence) forecasting method',
+   tags:['naive','persistence','random walk','forecasting method'],
+   body:"The **naive** method projects the most recent observed value forward indefinitely: *û_{t+h} = u_t* for all h. This is equivalent to a random-walk (no-drift) assumption. It's a useful benchmark because — for highly persistent series like unemployment — naive forecasts are surprisingly hard to beat over short horizons. In Atkeson-Ohanian's (2001) famous result, the naive forecast beat the Fed's structural Phillips curve forecast for inflation. Here it's offered as a robustness check: if your AR(1) and naive forecasts diverge substantially, you should be skeptical of the AR(1) parameter estimates."},
+
+  {id:'method-trend', title:'Linear trend forecasting method',
+   tags:['trend','linear trend','forecasting method'],
+   body:"The **linear trend** method fits an OLS regression of unemployment on time and extrapolates: *û_{t+h} = â + b̂·(T+h)*. Unlike AR(1), it does not mean-revert — if the series has been trending up (e.g., the structural rise visible 1960–1982), the forecast continues trending. This makes it generally a *poor* choice for unemployment, which is stationary around the natural rate; but it can be illuminating for highlighting cases where you suspect a structural break. Use sparingly."},
+
+  {id:'method-es', title:'Holt exponential smoothing',
+   tags:['exponential smoothing','holt','es','forecasting method'],
+   body:"**Holt's linear-trend exponential smoothing** maintains separate estimates of level and trend, updated each period: l_t = α·u_t + (1−α)·(l_{t−1} + b_{t−1}); b_t = β·(l_t − l_{t−1}) + (1−β)·b_{t−1}. The platform uses α=0.4, β=0.1 — moderate level responsiveness, slow trend updates. Forecasts are *level + horizon × trend*. Like the linear-trend method, Holt extrapolates the current trend, but it does so adaptively, so a long flat period followed by a recent rise will produce a more aggressive forecast than OLS-trend would. Useful when the structural unemployment rate may be drifting."},
+
+  {id:'method-irf', title:'Impulse-response profiles in forecasting',
+   tags:['irf','impulse response','shock profile','propagation'],
+   body:"Each forecastable shock has a hand-crafted **impulse-response function (IRF)** that scales the structural effect quarter by quarter. The profiles are damped and roughly bell-shaped:\n- **Monetary shock**: peaks at quarter 4 — the standard 12-month transmission lag.\n- **Fiscal shock**: peaks at quarter 2 — government spending hits output and hiring relatively quickly.\n- **Confidence shock**: front-loaded — affects investment plans within months.\n- **Productivity shock**: builds slowly and persists — captures the gradual diffusion of new techniques.\n- **Import shock**: persistent and slowly building — trade adjustment is slow.\n\nThe IRF is multiplied by the shock magnitude and added to the univariate baseline forecast each quarter."},
+
+  {id:'method-ci', title:'Confidence bands in forecasts',
+   tags:['confidence band','ci','prediction interval','sigma','z-score','uncertainty'],
+   body:"Confidence bands around the forecast use the formula **û_{t+h} ± z × σ × √h**, where σ is the empirical standard deviation of the model's in-sample residuals and z is a normal-distribution multiplier (1.282 for 80%, 1.645 for 90%, 1.96 for 95%). The √h scaling assumes residuals are i.i.d. — a strong assumption that overstates uncertainty for highly persistent series like unemployment, and *understates* it when there are unmodeled regime changes (e.g., the zero lower bound). The lower band is clipped at zero. Choose 'None' to suppress bands and view the point forecast cleanly."},
+
+  /* ============ PRESETS ============ */
+  {id:'preset-recession', title:'2008 Recession preset',
+   tags:['recession preset','2008','gfc','great financial crisis','preset'],
+   body:"The **2008 Recession** preset configures the simulator to a Great Financial Crisis–like steady state: real GDP growth at −3%, federal funds at 0% (zero lower bound), business investment growth at −12%, consumer confidence at −20 (severe pessimism), and skills mismatch at +1 (the Beveridge-curve shift that became visible 2009–2014). Combined, the model predicts unemployment in the 8–9% range, which roughly matches the 2009–2010 peak. Use this preset as a starting point and then perturb individual sliders to see which channels dominate the recession's character (cyclical demand collapse vs. structural mismatch)."},
+
+  {id:'preset-stagflation', title:'1970s Stagflation preset',
+   tags:['stagflation preset','1970s','seventies','oil shock','preset'],
+   body:"The **1970s Stagflation** preset combines a *negative* GDP shock (around −1%), a *high* federal funds rate (around 9–10%), elevated inflation expectations (around 6%), and elevated tax wedge — together producing the rare combination of high u and high π that broke the Phillips curve. Look at the Empirical Curves panel with the era selector on '1970s' to see the historical regression slope flip sign. The preset illustrates why simple negatively-sloped Phillips-curve forecasting models failed for this entire decade."},
+
+  {id:'preset-goldilocks', title:'Late-1990s Boom preset',
+   tags:['goldilocks preset','1990s','boom','dot-com','great moderation','preset'],
+   body:"The **Late-1990s Boom** preset captures the Goldilocks period: GDP growth around +4%, federal funds around 5% (mildly restrictive), confidence at +20, productivity at +3% (the IT investment surge), and a slightly tight mismatch index. The predicted unemployment falls toward 3.5–4%, matching the historical record. The preset is useful for understanding *productivity-led* low-unemployment episodes, which feel different in the data from demand-led booms — Phillips-curve slopes were notably flat in this period."},
+
+  {id:'preset-covid', title:'2020 Pandemic preset',
+   tags:['covid preset','pandemic','2020','coronavirus','preset'],
+   body:"The **2020 Pandemic** preset applies an extreme negative GDP shock (around −4%), aggressive monetary easing (federal funds near 0%), a confidence collapse (−25), and an elevated mismatch index (capturing reallocation between service sectors and remote-friendly work). The predicted u jumps toward 8–10%. This understates the actual April 2020 spike to 14.8%, because the model is *linear* and doesn't capture the regime-shift character of mass layoffs from administrative shutdowns. The preset is best understood as a steady-state approximation, not a peak-month forecast."},
+
+  /* ============ CONCEPTS ============ */
+  {id:'concept-natural-rate', title:'Natural rate of unemployment',
+   tags:['natural rate','u*','nairu','u-star','equilibrium unemployment','potential'],
+   body:"The **natural rate** (sometimes called the NAIRU — Non-Accelerating Inflation Rate of Unemployment) is the long-run equilibrium unemployment rate that prevails when the labor market is at its productive potential, in the absence of cyclical shocks. The platform uses **u\\* = 4.5%**, which is close to the CBO's current-decade estimate of 4.4%. Conceptually it reflects frictional and structural unemployment: people switching jobs, mismatch between job openings and available skills, geographic and occupational rigidities. The natural rate is *not* a constant — it has been estimated as low as 4% (late 1990s) and as high as 6–7% (1980s). The horizontal dashed line on the Overview chart marks 4.5% as a reference."},
+
+  {id:'concept-okun', title:"Okun's law (concept)",
+   tags:['okun law','okun','okuns law','okun coefficient','beta','growth-unemployment relation'],
+   body:"**Okun's law** is Arthur Okun's 1962 empirical observation that each percentage point of GDP growth above trend reduces the unemployment rate by roughly half a percentage point. In this platform it appears in three places: (1) the cyclical-block equation uses a coefficient of −0.45; (2) the Empirical Curves panel plots it as a scatter with an OLS fit and reports β; (3) the simulator's GDP-growth slider implements it directly. The U.S. post-war β is typically in the range −0.4 to −0.5. Okun's law is among the most durable empirical regularities in macroeconomics, though the magnitude has drifted modestly over time (the IMF's Ball, Leigh & Loungani 2013 analysis finds slightly smaller post-1980 coefficients). It is *not* causal — both u and g respond to underlying demand shocks."},
+
+  {id:'concept-phillips', title:'Phillips curve (concept)',
+   tags:['phillips curve','phillips','inflation unemployment tradeoff','accelerationist'],
+   body:"The **Phillips curve** is the empirical relationship between unemployment and inflation, originally documented by A.W. Phillips (1958) for U.K. wages. The relationship has had a turbulent intellectual history:\n- **1960s**: downward-sloping and stable. Policymakers talked of *trading off* unemployment for inflation.\n- **1970s**: relationship breaks. Stagflation produces both high u and high π — the data points form a *positive* slope. Friedman (1968) and Phelps (1967) had predicted exactly this: in the long run only *unexpected* inflation affects unemployment.\n- **1990s–2010s**: relationship reappears but flat. Inflation expectations anchored by Volcker-era credibility means the slope is small.\n- **2020s**: re-emerges briefly as inflation surges.\n\nThe Empirical Curves panel lets you see this decade-by-decade. The platform's structural model uses the *expectations-augmented* short-run version (coefficient −0.10 on inflation expectations in the cyclical channel)."},
+
+  {id:'concept-cyclical', title:'Cyclical unemployment',
+   tags:['cyclical unemployment','cyclical channel','demand shock','recession unemployment'],
+   body:"**Cyclical unemployment** is the component that fluctuates with the business cycle — rising in recessions, falling in expansions. It is the dominant driver of unemployment movements at horizons of months to a few years, and it is what monetary policy primarily affects. In the platform's decomposition, the cyclical channel aggregates the Okun-law GDP-growth effect, the monetary transmission via the federal funds rate, fiscal stimulus, confidence, and inflation expectations. In a typical recession, the cyclical contribution to predicted u is +2 to +4 percentage points above the natural rate."},
+
+  {id:'concept-structural', title:'Structural unemployment',
+   tags:['structural unemployment','structural channel','mismatch','beveridge','persistent unemployment'],
+   body:"**Structural unemployment** is the component that persists even in a hot economy — it reflects mismatches between job openings and available workers that don't dissolve with more aggregate demand. Common sources: skills gaps, geographic immobility, occupational obsolescence (e.g., automation), trade-driven sectoral decline, wage rigidities. In the platform's structural channel, the largest weight (0.50) sits on the skills-mismatch slider; smaller weights on minimum wage, import penetration, and tax wedge. The Beveridge curve — the empirical relationship between vacancies and unemployment — is the cleanest visualization of structural shifts: outward shifts indicate higher structural u."},
+
+  {id:'concept-frictional', title:'Frictional unemployment',
+   tags:['frictional unemployment','frictional channel','search','transition','churn'],
+   body:"**Frictional unemployment** is the unavoidable churn from job transitions — people moving between jobs, entering the labor force, or relocating. Even at the natural rate, several percent of workers are frictionally unemployed at any moment. The platform's frictional channel includes three sliders: unemployment insurance generosity (longer benefits → longer search), geographic mobility (lower mobility → more friction), and labor-force participation (more entrants → more transitional unemployment). These coefficients are deliberately small because frictional unemployment is the most stable component."},
+
+  {id:'concept-monetary-lag', title:'Monetary transmission lag',
+   tags:['monetary lag','transmission','romer','fed funds lag','12 months','18 months'],
+   body:"The **monetary transmission lag** is the period between a Fed policy change and its full effect on real activity and unemployment. The canonical estimate is **12 to 18 months** for the peak effect, sourced from Romer & Romer's (2004) narrative-shocks methodology, which isolates exogenous Fed decisions from those endogenously responding to forecasts. In this platform, the lag appears as: (1) a four-quarter lag on the federal-funds term in the cyclical-block equation, and (2) an impulse-response profile in the forecasting panel that peaks at quarter 4. The lag is *why* the Fed must forecast — by the time inflation rises, monetary tightening can't curb it for over a year."},
+
+  /* ============ CHART FEATURES ============ */
+  {id:'chart-recessions', title:'Recession shading on charts',
+   tags:['recession shading','recession bars','nber','grey shading','recession bands'],
+   body:"The grey vertical bands across the time-series charts mark **NBER-dated recessions**. The platform uses nine peak-to-trough year pairs from the NBER's official Business Cycle Dating Committee: 1960–1961, 1969–1970, 1973–1975, 1980, 1981–1982, 1990–1991, 2001, 2007–2009, and 2020. The bands appear on the Overview unemployment chart and on the Historical Series viewer, providing visual context for cyclical movements. Note that NBER dates are *months* in reality, so single-year recessions (1980, 2001, 2020) are slightly understated in width."},
+
+  {id:'chart-natural-rate-line', title:'Natural-rate dashed line',
+   tags:['dashed line','natural rate line','reference line','4.5'],
+   body:"The horizontal dashed line at 4.5% on the Overview unemployment chart marks the **natural rate** (u\\* — see the natural-rate concept entry). Points above the line represent cyclical slack (under-employment); points below represent tight labor markets that historically associate with rising inflation. The dashed style and faded color signal that it's a reference, not a data series. The 4.5% value matches the simulator's `NATURAL_RATE` constant and the CBO's current-decade estimate."},
+
+  {id:'chart-correlation', title:'Correlation coefficient in History viewer',
+   tags:['correlation','r','pearson','co-movement','correlation coefficient'],
+   body:"The **correlation coefficient (r)** displayed in the Historical Series viewer is the Pearson coefficient computed across only the visible year window. The formula:\n\n*r = [n·Σxy − Σx·Σy] / √[(n·Σx² − (Σx)²) × (n·Σy² − (Σy)²)]*\n\nValues range −1 (perfect inverse) to +1 (perfect linear positive); 0 indicates no linear relationship. Note the caveats: correlation is *not* causation, and the coefficient depends on the chosen time window — narrow it to a single decade and you can produce nearly any value. This is the platform's most direct illustration of parameter instability."},
+
+  {id:'chart-regression', title:'Regression line in scatter plots',
+   tags:['regression','ols','beta','slope','regression line','scatter'],
+   body:"The dashed line through each scatter plot in the Empirical Curves panel is an **ordinary least squares (OLS) regression line**, computed via the standard formulas:\n\n- β = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)²\n- α = ȳ − β·x̄\n\nThe β coefficient is reported with the correlation r in the chart-note caption. Use the era selector to change the sample window — both β and r will recompute. This is the most direct way to see *parameter instability*: the same theoretical relationship has different slopes in different decades, which is why simple Phillips/Okun extrapolations are unreliable."},
+
+  /* ============ HISTORICAL EPISODES ============ */
+  {id:'event-volcker', title:'The Volcker disinflation (1979–1983)',
+   tags:['volcker','1980s','disinflation','rate hikes','1981','1982','paul volcker'],
+   body:"The **Volcker disinflation** refers to Paul Volcker's deliberate Federal Reserve tightening campaign to crush 1970s inflation. The federal funds rate peaked at 16.4% in 1981 (more than double its 1976 level), and CPI inflation fell from 13.5% (1980) to 3.2% (1983). The cost: a deep double-dip recession with unemployment reaching 9.7% in 1982. Volcker's success ushered in the **Great Moderation** of stable inflation expectations that lasted until 2021. The episode is the cleanest natural experiment in monetary economics — it demonstrates both the long lag of monetary transmission and the durability of disinflationary effects once inflation expectations are re-anchored."},
+
+  {id:'event-gfc', title:'The Great Financial Crisis (2007–2009)',
+   tags:['gfc','great recession','2008','2009','financial crisis','subprime','lehman'],
+   body:"The **Great Financial Crisis** was triggered by the collapse of the U.S. subprime mortgage market and Lehman Brothers' bankruptcy in September 2008. Unemployment doubled from 4.6% (2007) to 9.6% (2010), GDP contracted 2.6% in 2009, and the Fed slashed rates to effectively zero (0.16% in 2009). Recovery was slow — unemployment didn't return to 5% until 2015. The episode's distinctive features:\n- **Beveridge curve shift**: vacancies and unemployment remained elevated together, suggesting persistent structural mismatch.\n- **Hysteresis**: long-term unemployment surged and persisted, removing many workers from the labor force entirely.\n- **Zero lower bound**: standard monetary policy became impotent, forcing the Fed to invent quantitative easing.\n\nIn the Variable Simulator, the 2008 Recession preset reproduces this configuration."},
+
+  {id:'event-pandemic', title:'The 2020 pandemic recession',
+   tags:['pandemic','covid','covid-19','2020','coronavirus','lockdown'],
+   body:"The **COVID-19 recession** was the steepest and shortest in U.S. recorded history. Unemployment spiked from 3.5% (February 2020) to 14.8% (April 2020) in two months — primarily from administrative lockdowns rather than demand collapse. GDP fell 2.2% over the year, but quarterly GDP fell ~31% annualized in Q2. Recovery was unusually fast: unemployment was back below 4% by early 2022, partly because the Fed cut rates to zero and Congress passed massive fiscal stimulus (CARES Act, ARP). The episode broke the standard Beveridge-curve relationship: vacancies surged to record highs alongside still-elevated unemployment. The 2020 Pandemic preset in the simulator captures a *linearized* version of this, which underpredicts the peak because the shock was sharply nonlinear."},
+
+  {id:'event-stagflation', title:'1970s stagflation',
+   tags:['stagflation','1970s','seventies','oil shock','opec','great inflation'],
+   body:"**Stagflation** — the rare coexistence of high unemployment and high inflation — defined the 1970s U.S. economy. CPI inflation peaked at 13.5% (1980) and unemployment reached 8.5% (1975). The triggers: OPEC oil embargoes (1973 and 1979), wage-price spirals as inflation expectations unanchored, and accommodative monetary policy in the early decade. The episode broke the simple negatively-sloped Phillips curve — the scatter for the 1970s era in the Empirical Curves panel shows points trending up and to the right. The Great-Inflation regime ended only with Volcker's deliberate disinflation, and the experience produced the *expectations-augmented* Phillips curve (Friedman 1968, Phelps 1967) that the platform's structural model uses today."},
+
+  {id:'event-great-moderation', title:'The Great Moderation (1984–2007)',
+   tags:['great moderation','1980s','1990s','low volatility','disinflation','stable era'],
+   body:"The **Great Moderation** refers to the unusually low volatility of inflation and output that prevailed from roughly 1984 to 2007. CPI inflation stayed between 1.5% and 4% almost the entire period; unemployment averaged 5.9% with low variance. Three causes are commonly cited:\n1. **Better monetary policy** post-Volcker (credible inflation targeting, even if implicit).\n2. **Structural change** — services replacing manufacturing, deeper financial markets.\n3. **Good luck** — absence of major adverse shocks.\n\nIn the Empirical Curves panel, selecting eras '80s' or '90s' shows a notably flat Phillips curve and a clean negative Okun relationship. The Great Moderation ended with the Great Financial Crisis."},
+
+  /* ============ META ============ */
+  {id:'meta-about', title:'About this platform',
+   tags:['about','what is this','platform','help','purpose','intro'],
+   body:"The **Employment Research Suite** is an interactive teaching instrument for U.S. labor-market dynamics. It combines:\n1. Sixty-five years of historical macroeconomic data (1960–2024, annual).\n2. A calibrated structural model of unemployment with cyclical, structural, and frictional channels.\n3. Four forecasting methods with confidence bands.\n4. Empirical scatter plots of Okun's law and the Phillips curve, sliceable by decade.\n5. Full methodology documentation with academic citations.\n\nIt is implemented as a single self-contained HTML file with no build system or external dependencies — drop it on any web server (or open it directly in a browser) and it runs. The model is explicitly a *teaching instrument*, not a forecasting service: linear and time-invariant where the real economy is neither."},
+
+  {id:'meta-data', title:'Data sources and provenance',
+   tags:['data sources','fred','st louis fed','provenance','series ids','where data comes from'],
+   body:"All embedded historical data comes from the **Federal Reserve Economic Database (FRED)**, maintained by the St. Louis Fed. The series identifiers:\n- **UNRATE** — civilian unemployment rate, annual average.\n- **A191RL1A225NBEA** — real GDP growth, annual percent change.\n- **FEDFUNDS** — effective federal funds rate, annual average.\n- **CPIAUCSL** — CPI for All Urban Consumers, annual percent change.\n- **CIVPART** — civilian labor force participation rate.\n\nRecession dates are from the NBER Business Cycle Dating Committee (peak-to-trough year pairs). The structural-model coefficients are calibrated from named academic papers, not estimated freshly — see the Methodology panel for full citations."},
+
+  {id:'meta-caveats', title:'Caveats and limitations',
+   tags:['caveats','limitations','warnings','assumptions','reliability','accuracy'],
+   body:"The model is **linear and time-invariant** where the real economy is neither. Specifically, it does not handle:\n- **Regime changes** — the zero lower bound (2009–2015, 2020–2022), structural breaks, monetary-policy regime shifts.\n- **Nonlinearities** — financial-crisis cascades, hysteresis effects (long-term unemployment becoming permanent), capacity constraints.\n- **Simultaneity** — variables moving together because of common underlying causes rather than direct causation.\n- **Expectations dynamics** — the model captures only the short-run accelerationist channel; full rational-expectations dynamics are absent.\n\nThe 1970s and the early 2020s both produced episodes where standard relationships broke down conspicuously, and the model would have performed poorly in both. Read its outputs the way a navigator reads dead-reckoning estimates: useful for orientation, not for landfall."},
+
+  {id:'meta-tabs', title:'Navigating the platform',
+   tags:['tabs','navigation','sections','how to use','where to find','panels overview'],
+   body:"Six main tabs plus this AI assistant:\n- **i. Overview** — present-moment snapshot with stats and sparklines.\n- **ii. Historical Series** — dual-axis viewer for cross-referencing any two macro variables.\n- **iii. Variable Simulator** — calibrated structural model with 16 sliders and 4 historical presets.\n- **iv. Forecasting** — conditional unemployment forecasts under chosen shocks.\n- **v. Empirical Curves** — Phillips curve and Okun's law scatters with decade-by-decade era selector.\n- **vi. Methodology** — formal documentation of every equation and citation.\n- **vii. AI** — this conversational assistant for deep-dive explanations.\n\nThe AI panel slides over the current view; closing it returns you to whatever tab was previously active."}
+];
+
+const KB_STOPWORDS = new Set(['the','a','an','is','are','was','were','what','how','why','where','when','do','does','did','of','to','in','on','for','and','or','this','that','it','i','can','tell','me','about','please','explain','show','give','find','any','some','more','than','then','there','their','them','they','its','as','at','by','be','been','being','from','with','also','really','quite','very','just','only','if','so','but','not']);
+
+const KB_SYNONYMS = {
+  'unemp': 'unemployment',
+  'jobless': 'unemployment',
+  'joblessness': 'unemployment',
+  'unrate': 'unemployment',
+  'gdp': 'gdp growth output',
+  'output': 'gdp growth',
+  'rates': 'federal funds',
+  'fed': 'federal funds monetary',
+  'interest': 'federal funds',
+  'reserve': 'federal funds',
+  'fomc': 'federal funds monetary',
+  'inflation': 'cpi prices',
+  'cpi': 'cpi inflation prices',
+  'prices': 'cpi inflation',
+  'participation': 'lfp labor force participation',
+  'workforce': 'lfp labor force participation',
+  'okun': 'okun law',
+  'okuns': 'okun law',
+  'phillips': 'phillips curve',
+  'nairu': 'natural rate',
+  'u-rate': 'unemployment',
+  'recession': 'recession nber cyclical',
+  'recessions': 'recession nber cyclical',
+  'simulator': 'simulator sliders shock variable',
+  'sliders': 'simulator',
+  'forecast': 'forecasting',
+  'forecasts': 'forecasting',
+  'forecasting': 'forecasting prediction',
+  'predict': 'forecasting',
+  'prediction': 'forecasting',
+  'preset': 'preset',
+  'presets': 'preset',
+  'volcker': 'volcker disinflation',
+  'gfc': 'great financial crisis',
+  'crisis': 'great financial crisis',
+  'covid': 'covid pandemic',
+  'pandemic': 'covid pandemic',
+  'coronavirus': 'covid pandemic',
+  'stagflation': 'stagflation 1970s',
+  '70s': '1970s stagflation',
+  '80s': '1980s volcker',
+  '90s': '1990s great moderation',
+  '00s': '2000s gfc',
+  '10s': '2010s recovery',
+  '20s': '2020s pandemic',
+  'work': 'how works',
+  'works': 'how works',
+  'use': 'use how',
+  'using': 'use how',
+  'tab': 'tabs navigation',
+  'panel': 'panel',
+  'mismatch': 'skills mismatch',
+  'skills': 'skills mismatch',
+  'beveridge': 'beveridge structural mismatch',
+  'multiplier': 'fiscal multiplier government spending',
+  'transmission': 'monetary transmission lag',
+  'lag': 'monetary transmission lag',
+  'irf': 'impulse response',
+  'impulse': 'impulse response',
+  'ar1': 'ar(1) autoregressive',
+  'naive': 'naive persistence',
+  'trend': 'linear trend',
+  'es': 'exponential smoothing holt',
+  'smoothing': 'exponential smoothing holt',
+  'ci': 'confidence band interval',
+  'band': 'confidence band',
+  'bands': 'confidence band',
+  'interval': 'confidence band',
+  'correlation': 'correlation r pearson',
+  'r': 'correlation',
+  'beta': 'regression slope',
+  'slope': 'regression slope beta',
+  'regression': 'regression ols',
+  'ols': 'regression ols',
+  'natural': 'natural rate',
+  'data': 'data sources fred',
+  'source': 'data sources fred',
+  'sources': 'data sources fred',
+  'fred': 'data sources fred',
+  'caveat': 'caveats limitations',
+  'caveats': 'caveats limitations',
+  'limit': 'caveats limitations',
+  'limits': 'caveats limitations',
+  'limitation': 'caveats limitations',
+  'limitations': 'caveats limitations',
+  'method': 'forecasting method',
+  'methods': 'forecasting method',
+  'methodology': 'methodology theory',
+  'equation': 'equation block',
+  'equations': 'equation block',
+  'history': 'historical series',
+  'historical': 'historical series',
+  'overview': 'overview panel i',
+  'scatter': 'scatter empirical curves',
+  'phil': 'phillips curve',
+  'curve': 'phillips curve',
+  'curves': 'phillips curve okun empirical',
+  'theory': 'theory methodology',
+  'chart': 'chart visualization',
+  'charts': 'chart visualization',
+  'plot': 'chart visualization',
+  'plots': 'chart visualization',
+  'graph': 'chart visualization',
+  'shade': 'recession shading',
+  'shading': 'recession shading',
+  'shaded': 'recession shading',
+  'bars': 'recession shading bars',
+  'mobility': 'geographic mobility',
+  'union': 'union density',
+  'unions': 'union density',
+  'minimum': 'minimum wage',
+  'wage': 'minimum wage',
+  'tax': 'tax wedge fiscal',
+  'taxes': 'tax wedge fiscal',
+  'taxation': 'tax wedge fiscal',
+  'fiscal': 'fiscal government spending',
+  'monetary': 'monetary fed federal funds',
+  'expectation': 'inflation expectations',
+  'expectations': 'inflation expectations',
+  'automation': 'automation pressure',
+  'productivity': 'productivity growth',
+  'prod': 'productivity growth',
+  'import': 'import penetration trade',
+  'imports': 'import penetration trade',
+  'trade': 'import penetration trade',
+  'confidence': 'consumer confidence sentiment',
+  'sentiment': 'consumer confidence sentiment',
+  'investment': 'business investment capex',
+  'capex': 'business investment capex',
+  'ui': 'unemployment insurance benefits',
+  'benefits': 'unemployment insurance benefits',
+  'insurance': 'unemployment insurance benefits',
+  'reset': 'reset baseline',
+  'baseline': 'reset baseline',
+  'channel': 'channels cyclical structural frictional',
+  'channels': 'channels cyclical structural frictional',
+  'cyclical': 'cyclical channel',
+  'structural': 'structural channel',
+  'frictional': 'frictional channel'
+};
+
+function tokenize(s) {
+  return s.toLowerCase()
+    .replace(/[^a-z0-9\s'-]/g, ' ')
+    .split(/\s+/)
+    .map(t => t.replace(/'s$/, ''))
+    .filter(t => t && !KB_STOPWORDS.has(t));
+}
+
+function expandTokens(tokens) {
+  const out = [];
+  tokens.forEach(t => {
+    out.push(t);
+    if (KB_SYNONYMS[t]) {
+      KB_SYNONYMS[t].split(' ').forEach(s => out.push(s));
+    }
+  });
+  return out;
+}
+
+function scoreKB(query) {
+  const qTokens = expandTokens(tokenize(query));
+  if (qTokens.length === 0) return [];
+  return KB.map(entry => {
+    const titleTokens = tokenize(entry.title);
+    const tagTokens = entry.tags.flatMap(t => tokenize(t));
+    const bodyLower = entry.body.toLowerCase();
+    let score = 0;
+    const seen = new Set();
+    qTokens.forEach(t => {
+      if (seen.has(t)) return;
+      seen.add(t);
+      if (titleTokens.includes(t)) score += 12;
+      if (tagTokens.includes(t)) score += 6;
+      // body partial match (bigram protection — short tokens still match)
+      if (t.length >= 3 && bodyLower.includes(t)) score += 1.2;
+    });
+    return {entry, score};
+  }).filter(s => s.score > 0).sort((a, b) => b.score - a.score);
+}
+
+function formatBodyHTML(text) {
+  // Markdown-ish: bold **x**, italic *x*, inline code `x`. \* is a literal asterisk (not italic).
+  const escape = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = s => {
+    let x = escape(s);
+    // Sentinel for escaped asterisks so they don't interact with italic/bold
+    x = x.replace(/\\\*/g, '\x00');
+    // Bold (non-greedy, no asterisks inside)
+    x = x.replace(/\*\*([^*]+?)\*\*/g, '<strong>$1</strong>');
+    // Inline code
+    x = x.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Italic with word-boundary-like pre/post (no asterisks inside)
+    x = x.replace(/(^|[\s(\[])\*([^*\n]+?)\*(?=[\s.,;:!?)\]]|$)/g, '$1<em>$2</em>');
+    // Restore literal asterisks
+    x = x.replace(/\x00/g, '*');
+    return x;
+  };
+  return text.split(/\n\n+/).map(block => {
+    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+    if (lines.length === 0) return '';
+    if (lines.every(l => l.startsWith('- '))) {
+      return '<ul>' + lines.map(l => '<li>' + inline(l.slice(2)) + '</li>').join('') + '</ul>';
+    }
+    return '<p>' + lines.map(inline).join(' ') + '</p>';
+  }).join('');
+}
+
+const aiState = {
+  history: [],
+  pendingResponse: false
+};
+
+function aiAppendMessage(role, content, opts) {
+  opts = opts || {};
+  const body = $('#aiBody');
+  // Hide suggestions after first user message
+  const sugg = $('#aiSuggestions');
+  if (sugg) sugg.style.display = 'none';
+  const div = document.createElement('div');
+  div.className = 'ai-msg ' + role;
+  if (role === 'user') {
+    div.textContent = content;
+  } else {
+    let html = '';
+    if (opts.title) html += '<span class="ai-title">' + opts.title.replace(/</g, '&lt;') + '</span>';
+    if (opts.thinking) {
+      html += '<div class="ai-thinking">thinking</div>';
+    } else {
+      html += formatBodyHTML(content);
+      if (opts.related && opts.related.length) {
+        html += '<div class="ai-related">Related — try one of these</div>';
+        html += '<div class="ai-related-chips">' +
+          opts.related.map(r => '<button class="ai-chip" data-q="' + r.title.replace(/"/g, '&quot;') + '">' + r.title.replace(/</g, '&lt;') + '</button>').join('') + '</div>';
+      }
+    }
+    div.innerHTML = html;
+  }
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  return div;
+}
+
+function aiHandleQuery(query) {
+  if (!query || aiState.pendingResponse) return;
+  query = query.trim();
+  if (!query) return;
+  aiAppendMessage('user', query);
+  aiState.history.push({role: 'user', content: query});
+  $('#aiInput').value = '';
+  autoresizeInput();
+
+  const apiKey = localStorage.getItem('ers_anthropic_key');
+  if (apiKey) {
+    aiCallClaudeAPI(query, apiKey);
+  } else {
+    aiAnswerLocal(query);
+  }
+}
+
+function aiAnswerLocal(query) {
+  // Greetings and meta-questions
+  const lower = query.toLowerCase();
+  if (/^(hi|hey|hello|yo|greetings)\b/.test(lower)) {
+    aiAppendMessage('bot', "Hello — I'm the platform's economic interpreter. Ask me about any panel (Overview, Simulator, Forecasting, etc.), any of the 16 sliders, any equation, any preset, or any historical episode (Volcker disinflation, GFC, pandemic, stagflation). Try a chip above or just type a question.", {title: 'Welcome'});
+    return;
+  }
+  if (/(what can you|what do you know|help|capabilities)/i.test(lower)) {
+    aiAppendMessage('bot', "I have detailed knowledge of:\n- All **six main panels** and what they show.\n- All **16 simulator sliders**, their coefficients, ranges, and source citations.\n- All **forecasting methods** (AR(1), naive, linear trend, Holt) and how confidence bands are computed.\n- All **four historical presets** (2008, 1970s, 1990s, 2020).\n- Core **concepts**: Okun's law, Phillips curve, NAIRU, monetary transmission, cyclical/structural/frictional unemployment.\n- **Historical episodes**: Volcker, GFC, pandemic, stagflation, Great Moderation.\n- **Data provenance** (FRED series IDs) and **caveats** of the model.\n\nAsk me anything in any of these areas — I can go deep on a single coefficient or step back and explain how a whole panel works.", {title: 'What I can help with'});
+    return;
+  }
+
+  const matches = scoreKB(query);
+  if (matches.length === 0 || matches[0].score < 4) {
+    aiAppendMessage('bot', "I couldn't find a strong match for that question in my knowledge base. Try asking about a specific panel (e.g. 'how does the simulator work'), a series ('what is the federal funds rate'), a concept ('explain the Phillips curve'), or a historical episode ('what was the Volcker disinflation'). You can also click one of the suggestion chips below to start.", {title: 'Not sure I have that'});
+    return;
+  }
+  const top = matches[0];
+  const related = matches.slice(1, 5).filter(m => m.score >= top.score * 0.30 && m.score >= 3).map(m => m.entry);
+  aiAppendMessage('bot', top.entry.body, {title: top.entry.title, related: related});
+  aiState.history.push({role: 'assistant', content: top.entry.body});
+}
+
+async function aiCallClaudeAPI(query, apiKey) {
+  aiState.pendingResponse = true;
+  $('#aiSend').disabled = true;
+  const thinkingMsg = aiAppendMessage('bot', '', {thinking: true, title: 'Thinking'});
+  try {
+    const model = ($('#aiModel') && $('#aiModel').value) || 'claude-sonnet-4-5';
+    const systemPrompt = "You are the in-app economic interpreter for the Employment Research Suite — a single-page web platform for studying U.S. labor-market dynamics. You have deep knowledge of the platform's six panels, 16 simulator sliders, four forecasting methods, four historical presets, and the calibrated structural-model coefficients. Answer questions tersely (3–6 paragraphs max) and grounded in the knowledge base below. When discussing specific coefficients, cite them precisely. When in doubt about something not in the knowledge base, say so. The platform uses a natural rate of 4.5%, trend growth of 2.0%, and the named academic sources in the Methodology section.\n\n=== PLATFORM KNOWLEDGE BASE ===\n" +
+      KB.map(e => '## ' + e.title + '\n' + e.body).join('\n\n');
+    const recentTurns = aiState.history.slice(-6);
+    const messages = recentTurns.length > 1 ? recentTurns.slice(0, -1).concat([{role: 'user', content: query}]) : [{role: 'user', content: query}];
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: model,
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: messages
+      })
+    });
+    if (!resp.ok) {
+      const errTxt = await resp.text();
+      thinkingMsg.remove();
+      aiAppendMessage('bot', "API call failed (" + resp.status + "). Falling back to local knowledge base.\n\n*Error: " + errTxt.slice(0, 200).replace(/</g, '&lt;') + "*", {title: 'API error'});
+      aiAnswerLocal(query);
+      return;
+    }
+    const data = await resp.json();
+    const text = (data.content && data.content[0] && data.content[0].text) || '(empty response)';
+    thinkingMsg.remove();
+    aiAppendMessage('bot', text, {title: 'Claude ' + model.replace('claude-', '')});
+    aiState.history.push({role: 'assistant', content: text});
+  } catch (e) {
+    thinkingMsg.remove();
+    aiAppendMessage('bot', "Could not reach the Anthropic API: *" + e.message + "*. Falling back to local knowledge base.", {title: 'Network error'});
+    aiAnswerLocal(query);
+  } finally {
+    aiState.pendingResponse = false;
+    $('#aiSend').disabled = false;
+  }
+}
+
+function autoresizeInput() {
+  const el = $('#aiInput');
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = Math.min(120, el.scrollHeight) + 'px';
+}
+
+function openAIPanel() {
+  $('#aiPanel').classList.add('on');
+  $('#aiBackdrop').classList.add('on');
+  setTimeout(() => { const i = $('#aiInput'); if (i) i.focus(); }, 350);
+}
+
+function closeAIPanel() {
+  $('#aiPanel').classList.remove('on');
+  $('#aiBackdrop').classList.remove('on');
+}
+
+function wireAI() {
+  $('#aiClose').addEventListener('click', closeAIPanel);
+  $('#aiBackdrop').addEventListener('click', closeAIPanel);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && $('#aiPanel').classList.contains('on')) closeAIPanel();
+  });
+
+  $('#aiSend').addEventListener('click', () => aiHandleQuery($('#aiInput').value));
+  $('#aiInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      aiHandleQuery($('#aiInput').value);
+    }
+  });
+  $('#aiInput').addEventListener('input', autoresizeInput);
+
+  // Suggestion chips (event delegation on body, since chips also appear in bot messages)
+  $('#aiBody').addEventListener('click', e => {
+    const chip = e.target.closest('.ai-chip');
+    if (!chip) return;
+    const q = chip.dataset.q || chip.textContent;
+    aiHandleQuery(q);
+  });
+
+  // Settings toggle
+  $('#aiSettingsToggle').addEventListener('click', () => {
+    const s = $('#aiSettings');
+    const open = s.classList.toggle('on');
+    $('#aiSettingsToggle').textContent = open ? 'Settings ▴' : 'Settings ▾';
+  });
+
+  // Restore saved API key
+  const savedKey = localStorage.getItem('ers_anthropic_key') || '';
+  const savedModel = localStorage.getItem('ers_anthropic_model') || 'claude-sonnet-4-5';
+  if ($('#aiApiKey')) $('#aiApiKey').value = savedKey;
+  if ($('#aiModel')) $('#aiModel').value = savedModel;
+  updateModeLabel();
+
+  $('#aiApiKey').addEventListener('change', e => {
+    const k = e.target.value.trim();
+    if (k) localStorage.setItem('ers_anthropic_key', k);
+    else localStorage.removeItem('ers_anthropic_key');
+    updateModeLabel();
+  });
+  $('#aiModel').addEventListener('change', e => {
+    localStorage.setItem('ers_anthropic_model', e.target.value);
+  });
+}
+
+function updateModeLabel() {
+  const k = localStorage.getItem('ers_anthropic_key');
+  const lbl = $('#aiModeLabel');
+  if (!lbl) return;
+  lbl.innerHTML = k
+    ? 'Mode: <span style="color:var(--ink);">Claude API (key saved)</span>'
+    : 'Mode: <span style="color:var(--ink);">local knowledge base</span>';
+}
+
+/* ============================================================
+   11. INIT
    ============================================================ */
 window.addEventListener('DOMContentLoaded', () => {
   setDates();
@@ -1874,6 +2914,7 @@ window.addEventListener('DOMContentLoaded', () => {
   wireForecast();
   wireSim();
   wirePhillips();
+  wireAI();
 });
 
 /* Handle resize for scatters & chart re-renders */
