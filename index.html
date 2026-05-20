@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Employment Research Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:        #14110f;
+    --ink-soft:   #3a342e;
+    --paper:      #f4efe4;
+    --paper-deep: #ebe4d3;
+    --paper-warm: #f9f5ec;
+    --rule:       #c8bca3;
+    --rule-soft:  #ddd2bb;
+    --accent:     #8b2e3c;
+    --accent-soft:#c47584;
+    --accent-bg:  #f3e3e3;
+    --secondary:  #335258;
+    --positive:   #4a6b3a;
+    --mute:       #6e645a;
+    --shadow:     0 1px 0 rgba(20,17,15,.04), 0 8px 24px -8px rgba(20,17,15,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); }
+  body {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .display, h1, h2, h3, h4 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-variation-settings: "opsz" 96, "SOFT" 50;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .mono, .num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Subtle paper texture via noise */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+    opacity: .5; mix-blend-mode: multiply;
+  }
+
+  /* === Layout === */
+  .frame {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 28px 36px 80px;
+  }
+
+  /* === Masthead === */
+  .mast {
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 18px;
+    margin-bottom: 4px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    animation: rise .8s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .mast-title {
+    font-size: clamp(40px, 5.4vw, 68px);
+    line-height: .96;
+    font-weight: 300;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    letter-spacing: -0.025em;
+  }
+  .mast-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .mast-meta {
+    text-align: right;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+  }
+  .mast-meta .vol { display: block; font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; text-transform: none; letter-spacing: 0; color: var(--ink); margin-top: 2px;}
+  .mast-tag {
+    grid-column: 1 / -1;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    max-width: 720px;
+  }
+  .mast-tag::before { content: '— '; color: var(--accent); }
+
+  .ruler { height: 1px; background: var(--ink); margin-bottom: 2px; }
+  .ruler.thin { background: var(--rule); }
+
+  /* === Navigation === */
+  nav.tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--rule);
+    margin: 8px 0 32px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button {
+    background: none; border: none;
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    padding: 14px 22px 14px 0;
+    margin-right: 28px;
+    color: var(--mute);
+    cursor: pointer;
+    position: relative;
+    transition: color .3s ease;
+    white-space: nowrap;
+    letter-spacing: 0.005em;
+  }
+  nav.tabs button .nm { font-family: 'JetBrains Mono', monospace; font-size: 10px; vertical-align: super; margin-right: 6px; color: var(--accent); }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button.on { color: var(--ink); font-style: italic; }
+  nav.tabs button.on::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 28px;
+    height: 2px; background: var(--accent);
+    animation: drawLine .5s cubic-bezier(.2,.7,.2,1) forwards;
+    transform-origin: left;
+  }
+  @keyframes drawLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  /* === Panel system === */
+  .panel { display: none; animation: fade .5s ease both; }
+  .panel.on { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* === Section labels === */
+  .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .label-mute { color: var(--mute); }
+  .lede {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    max-width: 640px;
+    margin-bottom: 28px;
+  }
+  .lede .drop {
+    font-size: 56px;
+    line-height: .8;
+    float: left;
+    margin: 6px 8px -4px 0;
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  h2.section {
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 6px;
+    letter-spacing: -0.015em;
+  }
+  h2.section em { font-style: italic; color: var(--accent); }
+  h3.sub {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  /* === Overview cards === */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 18px 0;
+    margin: 24px 0 32px;
+  }
+  .stat-row > div { padding: 0 20px; border-right: 1px solid var(--rule); position: relative; }
+  .stat-row > div:last-child { border-right: none; }
+  .stat-row > div:first-child { padding-left: 0; }
+  .stat-row .nm { font-size: 9px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--mute); margin-bottom: 6px; font-weight: 500; }
+  .stat-row .val { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 300; line-height: 1; letter-spacing: -0.02em; }
+  .stat-row .val .unit { font-size: 16px; color: var(--mute); margin-left: 2px; }
+  .stat-row .delta { font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 6px; color: var(--mute); }
+  .stat-row .delta.up { color: var(--accent); }
+  .stat-row .delta.down { color: var(--positive); }
+
+  /* === Two-column layout === */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    margin-bottom: 36px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .stat-row > div { border-bottom: 1px solid var(--rule); padding-bottom: 12px; padding-top: 12px; }
+    .stat-row > div:nth-child(2) { border-right: none; }
+  }
+
+  /* === Charts === */
+  .chart-wrap {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 22px;
+    position: relative;
+  }
+  .chart-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .chart-head .title { font-family: 'Fraunces', serif; font-size: 17px; }
+  .chart-head .title em { color: var(--accent); font-style: italic; }
+  .chart-note { font-size: 11px; color: var(--mute); font-style: italic; }
+  svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+  svg.chart .axis-text { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; fill: var(--mute); }
+  svg.chart .axis-line { stroke: var(--rule); stroke-width: 0.5; }
+  svg.chart .axis-zero { stroke: var(--ink-soft); stroke-width: 0.5; }
+  svg.chart .grid { stroke: var(--rule-soft); stroke-width: 0.5; stroke-dasharray: 2 3; }
+  svg.chart .data-line { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+  svg.chart .data-line.accent { stroke: var(--accent); stroke-width: 1.6; }
+  svg.chart .data-line.secondary { stroke: var(--secondary); }
+  svg.chart .data-line.dash { stroke-dasharray: 4 3; }
+  svg.chart .data-area { fill: var(--accent); opacity: .08; }
+  svg.chart .data-area.band { opacity: .12; }
+  svg.chart .recession { fill: var(--rule-soft); opacity: .55; }
+  svg.chart .label-text { font-family: 'Fraunces', serif; font-style: italic; font-size: 11px; fill: var(--ink-soft); }
+  svg.chart .point { fill: var(--paper-warm); stroke: var(--accent); stroke-width: 1.2; }
+  svg.chart text.value-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--ink); }
+  svg.chart .scatter-dot { fill: var(--accent); opacity: .35; }
+  svg.chart .scatter-dot:hover { opacity: 1; }
+  svg.chart .regression { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 5 3; fill: none; }
+
+  /* === Sliders === */
+  .controls {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 24px 24px 18px;
+  }
+  .control-block {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .control-block:last-child { border-bottom: none; }
+  .control-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .control-head .name { font-size: 13px; font-weight: 500; }
+  .control-head .name .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--mute);
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+  }
+  .control-head .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    transition: color .2s;
+  }
+  .control-head .v.active { color: var(--ink); background: var(--accent-bg); padding: 1px 6px; }
+  .control-desc {
+    font-size: 11px;
+    color: var(--mute);
+    font-style: italic;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 2px; background: var(--rule);
+    outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--paper-warm);
+    border: 1.5px solid var(--ink);
+    cursor: grab;
+    transition: transform .15s ease, border-color .15s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); border-color: var(--accent); }
+  input[type=range]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.25); background: var(--accent); }
+  input[type=range]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--paper-warm); border: 1.5px solid var(--ink);
+    cursor: grab;
+  }
+
+  /* === Result panel === */
+  .result-card {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 28px 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-card::before {
+    content: ''; position: absolute; top: 0; right: 0; width: 120px; height: 120px;
+    background: var(--accent); opacity: .15; border-radius: 50%;
+    transform: translate(40px, -40px);
+    transition: transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .result-card.shock-up::before { transform: translate(40px, -40px) scale(1.4); background: var(--accent); }
+  .result-card.shock-down::before { transform: translate(40px, -40px) scale(1.4); background: var(--positive); }
+  .result-card .lab { font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent-soft); margin-bottom: 8px; }
+  .result-card .big {
+    font-family: 'Fraunces', serif;
+    font-size: 76px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+    position: relative;
+    transition: color .4s ease;
+  }
+  .result-card .big .unit { font-size: 26px; color: var(--rule); }
+  .result-card .delta-row {
+    display: flex; align-items: baseline; gap: 12px; margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  }
+  .result-card .delta-row .arrow { font-size: 18px; }
+  .result-card .delta-row .delta-up { color: #e8a3a3; }
+  .result-card .delta-row .delta-down { color: #a8c4a3; }
+  .result-card .footnote { font-size: 11px; color: var(--rule); margin-top: 14px; font-style: italic; line-height: 1.45; }
+
+  /* === Decomposition bars === */
+  .decomp {
+    margin-top: 22px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 22px;
+  }
+  .decomp-row { margin-bottom: 14px; }
+  .decomp-row:last-child { margin-bottom: 0; }
+  .decomp-head { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .decomp-head .label-name { color: var(--ink); font-weight: 500; }
+  .decomp-head .label-name .desc { font-family: 'Fraunces', serif; font-style: italic; font-size: 11px; color: var(--mute); margin-left: 6px; font-weight: 400; }
+  .decomp-head .v { font-family: 'JetBrains Mono', monospace; color: var(--mute); }
+  .decomp-bar {
+    height: 6px; background: var(--paper-deep); position: relative;
+    overflow: visible;
+  }
+  .decomp-bar .zero { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--ink-soft); }
+  .decomp-bar .fill {
+    position: absolute; top: 0; bottom: 0;
+    background: var(--accent);
+    transition: width .5s cubic-bezier(.2,.7,.2,1), left .5s cubic-bezier(.2,.7,.2,1), background .3s;
+  }
+  .decomp-bar .fill.neg { background: var(--positive); }
+
+  /* === Buttons === */
+  button.act {
+    background: none; border: 1px solid var(--ink); color: var(--ink);
+    padding: 8px 16px; font-size: 12px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: all .2s ease;
+  }
+  button.act:hover { background: var(--ink); color: var(--paper); }
+  button.act.primary { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  button.act.primary:hover { background: var(--ink); border-color: var(--ink); }
+  .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+  /* === Select === */
+  select.fld {
+    background: var(--paper-warm); border: 1px solid var(--rule);
+    padding: 8px 28px 8px 12px; font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink); cursor: pointer; outline: none;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M3 5l3 3 3-3' fill='none' stroke='%2314110f' stroke-width='1'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+  }
+  input.fld {
+    background: var(--paper-warm); border: 1px solid var(--rule);
+    padding: 8px 12px; font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink); outline: none;
+    width: 100px;
+  }
+  input.fld:focus, select.fld:focus { border-color: var(--accent); }
+
+  .field-row {
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    background: var(--paper-warm); border: 1px solid var(--rule);
+  }
+  .field-row label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--mute); }
+
+  /* === Theory text === */
+  .article {
+    columns: 2;
+    column-gap: 44px;
+    column-rule: 1px solid var(--rule-soft);
+    max-width: 1080px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+  .article h3 { color: var(--ink); font-size: 18px; margin: 14px 0 6px; break-after: avoid; }
+  .article p { margin-bottom: 12px; text-align: justify; hyphens: auto; }
+  .article p:first-of-type::first-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 54px;
+    line-height: .85;
+    float: left;
+    margin: 6px 8px -4px 0;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .article em { color: var(--ink); font-style: italic; }
+  .equation { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; padding: 8px 12px; background: var(--paper-warm); border-left: 2px solid var(--accent); margin: 8px 0; font-style: normal; }
+  @media (max-width: 760px) { .article { columns: 1; } }
+
+  /* === Footer === */
+  footer {
+    margin-top: 80px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ink);
+    font-size: 11px;
+    color: var(--mute);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+  }
+  footer .mark {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--ink);
+  }
+  footer a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
+
+  /* Tooltip */
+  .tip {
+    position: absolute; background: var(--ink); color: var(--paper);
+    padding: 6px 10px; font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    pointer-events: none; opacity: 0;
+    transition: opacity .15s;
+    transform: translate(-50%, -110%);
+    white-space: nowrap;
+    z-index: 100;
+  }
+  .tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: var(--ink); }
+  .tip.show { opacity: 1; }
+
+  /* Small sparkline */
+  .sparks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  @media (max-width: 700px){ .sparks { grid-template-columns: 1fr; } }
+  .spark-card {
+    border: 1px solid var(--rule);
+    background: var(--paper-warm);
+    padding: 18px 20px;
+  }
+  .spark-card .h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .spark-card .h .nm { font-family: 'Fraunces', serif; font-size: 14px; font-style: italic; }
+  .spark-card .h .v { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 500; }
+  .spark-card .meta { font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px; }
+  .spark-card .meta em { color: var(--accent); font-style: normal; }
+
+  /* Floating reset button styling */
+  .reset-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--mute); cursor: pointer; padding: 6px 10px;
+    border: 1px solid var(--rule); background: transparent;
+    transition: all .2s; font-family: 'DM Sans', sans-serif;
+  }
+  .reset-pill:hover { color: var(--accent); border-color: var(--accent); }
+  .reset-pill svg { width: 11px; height: 11px; stroke: currentColor; fill: none; }
+
+  /* live indicator */
+  .live-dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); margin-right: 6px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* Number ticker */
+  .ticker { display: inline-block; transition: color .3s; }
+
+  /* Forecast options */
+  .forecast-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 28px;
+  }
+  @media (max-width: 900px){ .forecast-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <!-- ============== MASTHEAD ============== -->
+  <header class="mast">
+    <div>
+      <div class="display mast-title">The <em>Employment</em><br/>Research Suite</div>
+    </div>
+    <div class="mast-meta">
+      <span class="live-dot"></span>Vol. I, Issue 01<br/>
+      <span class="vol">Quarterly Edition</span><br/>
+      <span id="todayDate">—</span>
+    </div>
+    <div class="mast-tag">An interactive instrument for examining the cyclical, structural, and frictional forces that govern modern labor markets.</div>
+  </header>
+  <div class="ruler"></div>
+  <div class="ruler thin" style="margin-top:3px;"></div>
+
+  <!-- ============== TABS ============== -->
+  <nav class="tabs" id="tabs">
+    <button class="on" data-tab="overview"><span class="nm">i.</span>Overview</button>
+    <button data-tab="history"><span class="nm">ii.</span>Historical Series</button>
+    <button data-tab="simulator"><span class="nm">iii.</span>Variable Simulator</button>
+    <button data-tab="forecast"><span class="nm">iv.</span>Forecasting</button>
+    <button data-tab="phillips"><span class="nm">v.</span>Empirical Curves</button>
+    <button data-tab="theory"><span class="nm">vi.</span>Methodology</button>
+  </nav>
+
+  <!-- ============== PANEL: OVERVIEW ============== -->
+  <section class="panel on" id="panel-overview">
+    <div class="label">§ I &nbsp;·&nbsp; The state of the labor market</div>
+    <h2 class="section">A view from the <em>present moment</em>.</h2>
+    <p class="lede"><span class="drop">T</span>he American labor market is, at any moment, the product of forces both deliberate and accidental — central bank decisions made years prior, technological displacements working their way through industries, and the diffuse pressures of demography and global trade. Below are its current vital signs.</p>
+
+    <div class="stat-row" id="statRow"></div>
+
+    <div class="label">§ II &nbsp;·&nbsp; Five threads of evidence</div>
+    <h3 class="sub" style="margin-bottom:18px;">Indicators in motion since 1960.</h3>
+
+    <div class="sparks" id="sparkGrid"></div>
+
+    <div style="margin-top:36px;" class="chart-wrap">
+      <div class="chart-head">
+        <div class="title">Unemployment Rate, <em>U.S. Civilian</em> &nbsp;|&nbsp; 1960–2024</div>
+        <div class="chart-note">Annual averages · NBER recessions shaded</div>
+      </div>
+      <svg class="chart" id="bigUnemp" viewBox="0 0 1000 320"></svg>
+    </div>
+  </section>
+
+  <!-- ============== PANEL: HISTORY ============== -->
+  <section class="panel" id="panel-history">
+    <div class="label">§ III &nbsp;·&nbsp; Multi-series viewer</div>
+    <h2 class="section">Cross-reference a <em>generation</em> of data.</h2>
+    <p class="lede" style="font-size:16px; margin-bottom:18px;">Compare any two macroeconomic series across six decades. The interplay between unemployment and its companion variables — interest rates, inflation, participation — reveals the textbook relationships in their natural habitat.</p>
+
+    <div class="field-row">
+      <label>Primary series</label>
+      <select class="fld" id="histPrim">
+        <option value="unemp">Unemployment Rate (%)</option>
+        <option value="gdp">Real GDP Growth (%)</option>
+        <option value="fed">Federal Funds Rate (%)</option>
+        <option value="cpi">CPI Inflation (% y/y)</option>
+        <option value="lfp">Labor Force Participation (%)</option>
+      </select>
+      <label>Secondary series</label>
+      <select class="fld" id="histSec">
+        <option value="gdp">Real GDP Growth (%)</option>
+        <option value="unemp">Unemployment Rate (%)</option>
+        <option value="fed">Federal Funds Rate (%)</option>
+        <option value="cpi">CPI Inflation (% y/y)</option>
+        <option value="lfp">Labor Force Participation (%)</option>
+      </select>
+      <label>From</label>
+      <input class="fld" id="histFrom" type="number" min="1960" max="2024" value="1960" />
+      <label>To</label>
+      <input class="fld" id="histTo" type="number" min="1960" max="2024" value="2024" />
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-head">
+        <div class="title"><span id="histTitlePrim">Series A</span> &nbsp;vs.&nbsp; <em><span id="histTitleSec">Series B</span></em></div>
+        <div class="chart-note" id="histCorr">correlation pending…</div>
+      </div>
+      <svg class="chart" id="histChart" viewBox="0 0 1000 360"></svg>
+    </div>
+
+    <div class="grid-2" style="margin-top:36px;">
+      <div>
+        <div class="label">Reading the chart</div>
+        <p style="font-size:14px; line-height:1.6; color:var(--ink-soft);">The two series are normalized to share a vertical axis. The shaded bands denote NBER recession periods. The correlation coefficient in the upper-right is computed across the visible window — it measures the linear association, not causation.</p>
+      </div>
+      <div>
+        <div class="label">Classic pairs to inspect</div>
+        <p style="font-size:14px; line-height:1.6; color:var(--ink-soft);"><em>Unemployment & GDP growth</em> illustrates Okun's law. <em>Unemployment & CPI</em> traces the Phillips curve, including its 1970s breakdown. <em>Fed Funds & Unemployment</em> shows monetary transmission with a characteristic 12-to-18-month lag.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== PANEL: SIMULATOR ============== -->
+  <section class="panel" id="panel-simulator">
+    <div class="label">§ IV &nbsp;·&nbsp; Variable simulator</div>
+    <h2 class="section">Perturb the system. <em>Watch it respond.</em></h2>
+    <p class="lede" style="font-size:16px; margin-bottom:18px;">Each slider below represents a shock to a single variable, holding others at their long-run averages. The calibrated model — built from documented elasticities in the empirical literature — translates these shocks into a steady-state prediction for the unemployment rate, decomposed into its constituent channels.</p>
+
+    <div class="grid-2">
+      <div class="controls" id="simControls"></div>
+      <div>
+        <div class="result-card" id="simResult">
+          <div class="lab">Predicted Unemployment Rate</div>
+          <div class="big"><span class="ticker" id="simU">4.5</span><span class="unit">%</span></div>
+          <div class="delta-row" id="simDelta"></div>
+          <div class="footnote" id="simFootnote">All variables at baseline — the natural rate of unemployment, approximately 4.5%.</div>
+        </div>
+
+        <div class="decomp" id="simDecomp">
+          <div class="label" style="margin-bottom:14px;">Decomposition by channel</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="act" data-preset="recession">Apply: 2008 Recession Shock</button>
+      <button class="act" data-preset="stagflation">Apply: 1970s Stagflation</button>
+      <button class="act" data-preset="goldilocks">Apply: Late-1990s Boom</button>
+      <button class="act" data-preset="covid">Apply: 2020 Pandemic</button>
+      <button class="act primary" id="simReset">Reset all variables</button>
+    </div>
+  </section>
+
+  <!-- ============== PANEL: FORECAST ============== -->
+  <section class="panel" id="panel-forecast">
+    <div class="label">§ V &nbsp;·&nbsp; Conditional forecasting</div>
+    <h2 class="section">A future <em>contingent on assumptions</em>.</h2>
+    <p class="lede" style="font-size:16px; margin-bottom:18px;">Apply a shock to a chosen variable and observe its propagation through the next twelve quarters. The forecast combines an autoregressive baseline with the calibrated impulse-response from the structural model. Eighty-percent confidence bands reflect the historical variance of the residuals.</p>
+
+    <div class="forecast-grid">
+      <div class="controls">
+        <div class="control-block">
+          <div class="control-head"><span class="name">Shock variable</span></div>
+          <select class="fld" id="fcVar" style="width:100%;">
+            <option value="gdp">Real GDP growth</option>
+            <option value="fed">Federal Funds Rate</option>
+            <option value="gov">Government spending</option>
+            <option value="conf">Consumer confidence</option>
+            <option value="prod">Productivity growth</option>
+            <option value="import">Import penetration</option>
+          </select>
+        </div>
+        <div class="control-block">
+          <div class="control-head">
+            <span class="name">Shock magnitude</span>
+            <span class="v" id="fcMagV">+1.0 pp</span>
+          </div>
+          <div class="control-desc" id="fcDesc">A one-percentage-point change applied immediately and persisting throughout the forecast horizon.</div>
+          <input type="range" id="fcMag" min="-4" max="4" step="0.1" value="1.0" />
+        </div>
+        <div class="control-block">
+          <div class="control-head">
+            <span class="name">Forecast horizon</span>
+            <span class="v" id="fcHorV">12 quarters</span>
+          </div>
+          <input type="range" id="fcHor" min="4" max="20" step="1" value="12" />
+        </div>
+        <div class="control-block">
+          <div class="control-head"><span class="name">Forecast method</span></div>
+          <select class="fld" id="fcMethod" style="width:100%;">
+            <option value="ar">AR(1) baseline + structural impulse</option>
+            <option value="naive">Naive (persistence) + structural impulse</option>
+            <option value="trend">Linear trend + structural impulse</option>
+            <option value="es">Exponential smoothing + impulse</option>
+          </select>
+        </div>
+        <div class="control-block">
+          <div class="control-head"><span class="name">Confidence band</span></div>
+          <select class="fld" id="fcCI" style="width:100%;">
+            <option value="0.8">80% interval</option>
+            <option value="0.9">90% interval</option>
+            <option value="0.95">95% interval</option>
+            <option value="0">None</option>
+          </select>
+        </div>
+        <button class="act primary" id="fcRun" style="width:100%; margin-top:14px; padding:12px;">Run forecast</button>
+      </div>
+
+      <div>
+        <div class="chart-wrap" style="margin-bottom:20px;">
+          <div class="chart-head">
+            <div class="title">Unemployment forecast <em>under shock</em></div>
+            <div class="chart-note" id="fcMeta">awaiting input…</div>
+          </div>
+          <svg class="chart" id="fcChart" viewBox="0 0 1000 360"></svg>
+        </div>
+
+        <div class="grid-3" id="fcStats"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== PANEL: PHILLIPS ============== -->
+  <section class="panel" id="panel-phillips">
+    <div class="label">§ VI &nbsp;·&nbsp; The empirical record</div>
+    <h2 class="section">Two famous <em>relationships</em>, plotted.</h2>
+    <p class="lede" style="font-size:16px; margin-bottom:18px;">Macroeconomics' two most-cited stylized facts — Okun's law and the Phillips curve — are not laws in the physical sense. They are tendencies, visible in the right slice of data, fragile in others. The charts below let you choose your slice.</p>
+
+    <div class="grid-2">
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <div class="title">Okun's Law &nbsp;|&nbsp; <em>Unemployment Δ vs. GDP growth</em></div>
+          <div class="chart-note" id="okunNote">—</div>
+        </div>
+        <svg class="chart" id="okunChart" viewBox="0 0 480 380"></svg>
+        <p style="font-size:12px; color:var(--mute); margin-top:10px; font-style:italic; line-height:1.5;">A negative slope confirms Okun's intuition: faster growth lowers unemployment. The slope coefficient (β) is roughly 0.4–0.5 in U.S. post-war data.</p>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <div class="title">Phillips Curve &nbsp;|&nbsp; <em>Inflation vs. unemployment</em></div>
+          <div class="chart-note" id="philNote">—</div>
+        </div>
+        <svg class="chart" id="philChart" viewBox="0 0 480 380"></svg>
+        <p style="font-size:12px; color:var(--mute); margin-top:10px; font-style:italic; line-height:1.5;">The relationship is unstable across decades. Use the era selector to see how the curve shifted in the 1970s, flattened in the 1990s, and re-emerged in the 2020s.</p>
+      </div>
+    </div>
+
+    <div class="field-row" style="margin-top:24px;">
+      <label>Era</label>
+      <select class="fld" id="eraSelect">
+        <option value="all">All years, 1960–2024</option>
+        <option value="60s">The 1960s</option>
+        <option value="70s">The 1970s (Stagflation)</option>
+        <option value="80s">The 1980s (Volcker era)</option>
+        <option value="90s">The 1990s (Great Moderation)</option>
+        <option value="00s">2000s (Pre-crisis & GFC)</option>
+        <option value="10s">The 2010s (Slow recovery)</option>
+        <option value="20s">The 2020s (Pandemic & after)</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- ============== PANEL: THEORY ============== -->
+  <section class="panel" id="panel-theory">
+    <div class="label">§ VII &nbsp;·&nbsp; Notes on method</div>
+    <h2 class="section">How the <em>numbers</em> were made.</h2>
+    <p class="lede" style="font-size:16px; margin-bottom:24px;">A working economist's model is, at its best, a compression of decades of accumulated empirical work. What follows describes the equations powering this instrument — and where they break down.</p>
+
+    <div class="article">
+      <h3>The natural-rate framework</h3>
+      <p>The simulator decomposes the predicted unemployment rate <em>u</em> into a baseline natural rate (u*) plus contributions from cyclical, structural, and frictional channels. The natural rate, here taken at 4.5 percent, reflects the long-run equilibrium of labor demand and supply in the absence of business-cycle shocks. The Congressional Budget Office estimates it at 4.4 percent for the current decade.</p>
+
+      <h3>The cyclical channel — Okun's Law</h3>
+      <p>Arthur Okun's 1962 observation, that each percentage point of GDP growth above trend reduces unemployment by roughly half a point, anchors the cyclical block. The implementation uses:</p>
+      <div class="equation">Δu_cyc = −0.45 × (g − g*) + 0.15 × ΔFedFunds<sub>t−4</sub></div>
+      <p>where g* is trend growth (2.0%) and the second term captures monetary transmission with a four-quarter lag. The interest rate elasticity (0.15) is drawn from Romer & Romer (2004) narrative shocks.</p>
+
+      <h3>Fiscal and confidence shocks</h3>
+      <p>Government spending and confidence both feed the cyclical channel via the multiplier:</p>
+      <div class="equation">Δu_cyc += −0.20 × Δgov_share − 0.08 × Δconf_idx</div>
+      <p>The fiscal multiplier of roughly 0.5 on output translates to about 0.2 on unemployment at the one-year horizon (Blanchard & Leigh, 2013). Confidence is treated as a leading indicator with weaker pass-through.</p>
+
+      <h3>Structural unemployment</h3>
+      <p>Structural unemployment captures persistent mismatches that survive even a hot economy. The model aggregates four sub-channels:</p>
+      <div class="equation">Δu_str = 0.50·mismatch + 0.10·minwage + 0.10·import + 0.20·tax_wedge</div>
+      <p>Skills mismatch carries the largest weight, reflecting the Beveridge-curve shifts documented since 2008. Minimum-wage effects are modest in line with the Cengiz et al. (2019) bunching estimator; trade-shock elasticities follow Autor, Dorn, & Hanson (2013).</p>
+
+      <h3>Frictional channel</h3>
+      <p>Frictional unemployment — the unavoidable churn of job-search — responds to benefit generosity, search costs, and geographic mobility. Each is normalized to a baseline of zero, with elasticities sourced from Card, Chetty, & Weber (2007) for benefits and Molloy, Smith, & Wozniak (2011) for mobility.</p>
+
+      <h3>The Phillips block</h3>
+      <p>The inflation-expectations channel works in reverse: rising expectations <em>lower</em> measured unemployment in the short run by reducing real wages, before re-anchoring upward in the long run. The model captures only the short-run effect, consistent with the standard accelerationist formulation.</p>
+
+      <h3>Forecasting</h3>
+      <p>Baseline forecasts use one of four univariate methods — AR(1), naive persistence, linear trend, or exponential smoothing (Holt). The structural impulse is then added quarter-by-quarter, with a damped propagation profile peaking around the fourth quarter for monetary shocks and the second quarter for fiscal shocks. Confidence bands are constructed from the empirical variance of the historical residuals, inflated by √h for forecast horizon h.</p>
+
+      <h3>Caveats and limits</h3>
+      <p>This is a teaching instrument, not a forecasting service. The model is linear and time-invariant where the real economy is neither. It does not handle regime changes (the zero lower bound, structural breaks), nonlinearities (financial crises, hysteresis), or simultaneity (variables that move together for common reasons). The 1970s and the early 2020s both produced episodes where standard relationships broke down conspicuously. Read its outputs the way a navigator reads dead-reckoning estimates: useful for orientation, not for landfall.</p>
+
+      <h3>Data provenance</h3>
+      <p>The embedded historical series — unemployment, GDP growth, federal funds rate, CPI inflation, and labor-force participation — are annual averages drawn from the Federal Reserve Economic Database (FRED), maintained by the St. Louis Fed. Series identifiers: UNRATE, A191RL1A225NBEA, FEDFUNDS, CPIAUCSL, CIVPART. To refresh with the latest values, supply a free FRED API key in the field above; otherwise, the values current to 2024 are used.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <div class="mark">Employment Research Suite</div>
+      An instrument for studying labor-market dynamics. Built atop the documented elasticities of the empirical macroeconomics literature.<br/>
+      Historical data from the <a href="https://fred.stlouisfed.org">Federal Reserve Economic Database</a>. Methodology references in Section VII.
+    </div>
+    <div style="text-align:right;">
+      No. <span class="mono" style="font-size:14px; color:var(--ink);">001</span> &nbsp;·&nbsp; <span id="footYear"></span>
+    </div>
+  </footer>
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   1. EMBEDDED DATA — Annual US macro series, 1960–2024
+   Sources: FRED (UNRATE, A191RL1A225NBEA, FEDFUNDS, CPIAUCSL, CIVPART)
+   ============================================================ */
+const DATA = [
+  // [year, unemp, gdp_growth, fed_funds, cpi_yy, lfp]
+  [1960, 5.5,  2.6,  3.21,  1.46, 59.4],
+  [1961, 6.7,  2.3,  1.95,  1.07, 59.3],
+  [1962, 5.5,  6.1,  2.71,  1.20, 58.8],
+  [1963, 5.7,  4.4,  3.18,  1.24, 58.7],
+  [1964, 5.2,  5.8,  3.50,  1.28, 58.7],
+  [1965, 4.5,  6.5,  4.07,  1.59, 58.9],
+  [1966, 3.8,  6.6,  5.11,  3.02, 59.2],
+  [1967, 3.8,  2.7,  4.22,  2.77, 59.6],
+  [1968, 3.6,  4.9,  5.66,  4.27, 59.6],
+  [1969, 3.5,  3.1,  8.21,  5.46, 60.1],
+  [1970, 4.9,  0.2,  7.17,  5.84, 60.4],
+  [1971, 5.9,  3.3,  4.66,  4.30, 60.2],
+  [1972, 5.6,  5.3,  4.43,  3.27, 60.4],
+  [1973, 4.9,  5.6,  8.73,  6.18, 60.8],
+  [1974, 5.6, -0.5, 10.50, 11.06, 61.3],
+  [1975, 8.5, -0.2,  5.82,  9.14, 61.2],
+  [1976, 7.7,  5.4,  5.05,  5.74, 61.6],
+  [1977, 7.1,  4.6,  5.54,  6.50, 62.3],
+  [1978, 6.1,  5.5,  7.93,  7.62, 63.2],
+  [1979, 5.8,  3.2, 11.20, 11.22, 63.7],
+  [1980, 7.1, -0.3, 13.35, 13.50, 63.8],
+  [1981, 7.6,  2.5, 16.39, 10.32, 63.9],
+  [1982, 9.7, -1.8, 12.24,  6.16, 64.0],
+  [1983, 9.6,  4.6,  9.09,  3.21, 64.0],
+  [1984, 7.5,  7.2, 10.23,  4.32, 64.4],
+  [1985, 7.2,  4.2,  8.10,  3.56, 64.8],
+  [1986, 7.0,  3.5,  6.81,  1.86, 65.3],
+  [1987, 6.2,  3.5,  6.66,  3.65, 65.6],
+  [1988, 5.5,  4.2,  7.57,  4.14, 65.9],
+  [1989, 5.3,  3.7,  9.21,  4.82, 66.5],
+  [1990, 5.6,  1.9,  8.10,  5.40, 66.5],
+  [1991, 6.8, -0.1,  5.69,  4.21, 66.2],
+  [1992, 7.5,  3.5,  3.52,  3.01, 66.4],
+  [1993, 6.9,  2.8,  3.02,  2.99, 66.3],
+  [1994, 6.1,  4.0,  4.21,  2.56, 66.6],
+  [1995, 5.6,  2.7,  5.83,  2.83, 66.6],
+  [1996, 5.4,  3.8,  5.30,  2.95, 66.8],
+  [1997, 4.9,  4.4,  5.46,  2.29, 67.1],
+  [1998, 4.5,  4.5,  5.35,  1.56, 67.1],
+  [1999, 4.2,  4.8,  4.97,  2.21, 67.1],
+  [2000, 4.0,  4.1,  6.24,  3.36, 67.1],
+  [2001, 4.7,  1.0,  3.88,  2.85, 66.8],
+  [2002, 5.8,  1.7,  1.67,  1.58, 66.6],
+  [2003, 6.0,  2.8,  1.13,  2.28, 66.2],
+  [2004, 5.5,  3.9,  1.35,  2.66, 66.0],
+  [2005, 5.1,  3.5,  3.22,  3.39, 66.0],
+  [2006, 4.6,  2.8,  4.97,  3.22, 66.2],
+  [2007, 4.6,  2.0,  5.02,  2.85, 66.0],
+  [2008, 5.8,  0.1,  1.92,  3.84, 66.0],
+  [2009, 9.3, -2.6,  0.16, -0.36, 65.4],
+  [2010, 9.6,  2.7,  0.18,  1.64, 64.7],
+  [2011, 8.9,  1.6,  0.10,  3.16, 64.1],
+  [2012, 8.1,  2.3,  0.14,  2.07, 63.7],
+  [2013, 7.4,  2.1,  0.11,  1.46, 63.2],
+  [2014, 6.2,  2.5,  0.09,  1.62, 62.9],
+  [2015, 5.3,  2.9,  0.13,  0.12, 62.7],
+  [2016, 4.9,  1.8,  0.40,  1.26, 62.8],
+  [2017, 4.4,  2.5,  1.00,  2.13, 62.9],
+  [2018, 3.9,  2.9,  1.83,  2.44, 62.9],
+  [2019, 3.7,  2.6,  2.16,  1.81, 63.1],
+  [2020, 8.1, -2.2,  0.38,  1.23, 61.7],
+  [2021, 5.4,  6.1,  0.08,  4.70, 61.7],
+  [2022, 3.6,  2.5,  1.68,  8.00, 62.2],
+  [2023, 3.6,  2.9,  5.03,  4.10, 62.6],
+  [2024, 4.0,  2.8,  5.27,  2.95, 62.6]
+];
+
+// NBER recessions (peak to trough by year)
+const RECESSIONS = [
+  [1960, 1961], [1969, 1970], [1973, 1975], [1980, 1980],
+  [1981, 1982], [1990, 1991], [2001, 2001], [2007, 2009], [2020, 2020]
+];
+
+const SERIES = {
+  unemp: {idx: 1, label: 'Unemployment Rate', unit: '%', color: 'var(--accent)'},
+  gdp:   {idx: 2, label: 'Real GDP Growth',   unit: '%', color: 'var(--secondary)'},
+  fed:   {idx: 3, label: 'Federal Funds Rate',unit: '%', color: 'var(--ink)'},
+  cpi:   {idx: 4, label: 'CPI Inflation',     unit: '%', color: '#a35a2a'},
+  lfp:   {idx: 5, label: 'Labor Force Participation', unit: '%', color: '#3d5a5e'}
+};
+
+/* ============================================================
+   2. UTILITY FUNCTIONS
+   ============================================================ */
+const $ = (s, ctx=document) => ctx.querySelector(s);
+const $$ = (s, ctx=document) => Array.from(ctx.querySelectorAll(s));
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const fmt = (v, d=1) => v.toFixed(d);
+const lerp = (a,b,t) => a + (b-a)*t;
+const range = n => Array.from({length:n}, (_,i)=>i);
+
+function getSeries(key, fromY=1960, toY=2024){
+  const idx = SERIES[key].idx;
+  return DATA.filter(r => r[0] >= fromY && r[0] <= toY).map(r => ({x: r[0], y: r[idx]}));
+}
+
+function correlation(a, b){
+  const n = Math.min(a.length, b.length);
+  let sx=0, sy=0, sxx=0, syy=0, sxy=0;
+  for(let i=0;i<n;i++){ sx+=a[i]; sy+=b[i]; sxx+=a[i]*a[i]; syy+=b[i]*b[i]; sxy+=a[i]*b[i]; }
+  const denom = Math.sqrt((n*sxx - sx*sx) * (n*syy - sy*sy));
+  return denom === 0 ? 0 : (n*sxy - sx*sy) / denom;
+}
+
+function linreg(xs, ys){
+  const n = xs.length;
+  const mx = xs.reduce((a,b)=>a+b,0)/n;
+  const my = ys.reduce((a,b)=>a+b,0)/n;
+  let num=0, den=0;
+  for(let i=0;i<n;i++){ num += (xs[i]-mx)*(ys[i]-my); den += (xs[i]-mx)**2; }
+  const slope = den === 0 ? 0 : num/den;
+  const intercept = my - slope*mx;
+  return {slope, intercept};
+}
+
+/* ============================================================
+   3. CHART HELPERS — minimal SVG plotting
+   ============================================================ */
+function setupAxes(svg, opts){
+  const {xMin, xMax, yMin, yMax, padL=50, padR=20, padT=20, padB=30, width=1000, height=320} = opts;
+  const xs = x => padL + (x - xMin) / (xMax - xMin) * (width - padL - padR);
+  const ys = y => padT + (1 - (y - yMin) / (yMax - yMin)) * (height - padT - padB);
+  return {xs, ys, padL, padR, padT, padB, width, height};
+}
+
+function ns(el, attrs, text){
+  const e = document.createElementNS('http://www.w3.org/2000/svg', el);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function drawRecessions(svg, ax, recs, yMin, yMax){
+  recs.forEach(([s,e]) => {
+    const x1 = ax.xs(s), x2 = ax.xs(e+1);
+    svg.appendChild(ns('rect', {x:x1, y:ax.padT, width:Math.max(2,x2-x1), height: ax.height-ax.padT-ax.padB, class:'recession'}));
+  });
+}
+
+function drawAxes(svg, ax, opts){
+  const {xMin, xMax, yMin, yMax, xStep=10, yStep, yLabel='', secondLabel='', secondColor=''} = opts;
+  // baseline
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.height-ax.padB, y2:ax.height-ax.padB, class:'axis-line'}));
+  // x ticks
+  for(let x=Math.ceil(xMin/xStep)*xStep; x<=xMax; x+=xStep){
+    const xp = ax.xs(x);
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:ax.height-ax.padB, y2:ax.height-ax.padB+4, class:'axis-line'}));
+    svg.appendChild(ns('text', {x:xp, y:ax.height-ax.padB+15, 'text-anchor':'middle', class:'axis-text'}, String(x)));
+  }
+  // y ticks
+  const ys = yStep || Math.max(1, Math.round((yMax-yMin)/5));
+  for(let y=Math.ceil(yMin/ys)*ys; y<=yMax; y+=ys){
+    const yp = ax.ys(y);
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:yp, y2:yp, class:'grid'}));
+    svg.appendChild(ns('text', {x:ax.padL-8, y:yp+3, 'text-anchor':'end', class:'axis-text'}, fmt(y, ys<1?1:0)));
+    if(secondLabel){
+      svg.appendChild(ns('text', {x:ax.width-ax.padR+8, y:yp+3, 'text-anchor':'start', class:'axis-text', fill: secondColor}, fmt(y, ys<1?1:0)));
+    }
+  }
+  if (yLabel) svg.appendChild(ns('text', {x:ax.padL-8, y:ax.padT-4, 'text-anchor':'end', class:'label-text'}, yLabel));
+  if (secondLabel) svg.appendChild(ns('text', {x:ax.width-ax.padR+8, y:ax.padT-4, 'text-anchor':'start', class:'label-text', fill:secondColor}, secondLabel));
+}
+
+function pathFromPoints(pts, ax){
+  if (!pts.length) return '';
+  return pts.map((p,i) => (i===0 ? 'M' : 'L') + ax.xs(p.x) + ',' + ax.ys(p.y)).join(' ');
+}
+
+/* ============================================================
+   4. OVERVIEW PANEL — stats + sparklines + big chart
+   ============================================================ */
+function renderOverview(){
+  const latest = DATA[DATA.length-1];
+  const prev = DATA[DATA.length-2];
+  const stats = [
+    {nm:'Unemployment',     v: latest[1], unit:'%', delta: latest[1]-prev[1], invert:true},
+    {nm:'GDP Growth',       v: latest[2], unit:'%', delta: latest[2]-prev[2], invert:false},
+    {nm:'Federal Funds',    v: latest[3], unit:'%', delta: latest[3]-prev[3], invert:false, neutral:true},
+    {nm:'CPI Inflation',    v: latest[4], unit:'%', delta: latest[4]-prev[4], invert:true},
+    {nm:'Labor Force Part.', v: latest[5], unit:'%', delta: latest[5]-prev[5], invert:false}
+  ];
+  const row = $('#statRow');
+  row.innerHTML = '';
+  stats.forEach((s, i) => {
+    const arrow = s.delta > 0 ? '▲' : (s.delta < 0 ? '▼' : '▬');
+    let cls = '';
+    if (!s.neutral){
+      const positive = s.invert ? s.delta < 0 : s.delta > 0;
+      cls = positive ? 'down' : (s.delta === 0 ? '' : 'up');
+    }
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <div class="nm">${s.nm}</div>
+      <div class="val ticker-stat" data-target="${s.v}">0.0<span class="unit">${s.unit}</span></div>
+      <div class="delta ${cls}">${arrow}&nbsp;${s.delta > 0 ? '+' : ''}${fmt(s.delta, 2)} from prior year</div>
+    `;
+    div.style.animation = `rise .8s cubic-bezier(.2,.7,.2,1) ${i*0.08}s both`;
+    row.appendChild(div);
+  });
+  animateTickers();
+  renderBigUnemp();
+  renderSparks();
+}
+
+function animateTickers(){
+  $$('.ticker-stat').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    const unit = el.querySelector('.unit')?.outerHTML || '';
+    const t0 = performance.now();
+    const dur = 900;
+    function step(t){
+      const k = clamp((t - t0) / dur, 0, 1);
+      const eased = 1 - Math.pow(1 - k, 3);
+      el.firstChild.nodeValue = fmt(target * eased, 1);
+      if (k < 1) requestAnimationFrame(step);
+      else el.firstChild.nodeValue = fmt(target, 1);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+function renderBigUnemp(){
+  const svg = $('#bigUnemp');
+  svg.innerHTML = '';
+  const data = getSeries('unemp');
+  const yMin = 0, yMax = 12;
+  const ax = setupAxes(svg, {xMin:1960, xMax:2024, yMin, yMax, width:1000, height:320, padL:46, padR:24, padT:30, padB:36});
+  drawRecessions(svg, ax, RECESSIONS, yMin, yMax);
+  drawAxes(svg, ax, {xMin:1960, xMax:2024, yMin, yMax, xStep:10, yStep:2, yLabel:'percent'});
+  // natural rate line
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.ys(4.5), y2:ax.ys(4.5), stroke:'var(--ink-soft)', 'stroke-width':0.5, 'stroke-dasharray':'4 3'}));
+  svg.appendChild(ns('text', {x:ax.width-ax.padR-4, y:ax.ys(4.5)-4, 'text-anchor':'end', class:'label-text'}, 'natural rate ≈ 4.5%'));
+
+  // animated path
+  const pth = pathFromPoints(data, ax);
+  const path = ns('path', {d: pth, class:'data-line accent'});
+  svg.appendChild(path);
+  const len = path.getTotalLength();
+  path.style.strokeDasharray = len;
+  path.style.strokeDashoffset = len;
+  path.style.transition = 'stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1)';
+  requestAnimationFrame(() => { path.style.strokeDashoffset = 0; });
+
+  // notable annotations
+  const annots = [
+    {y: 1982, v: 9.7, lbl: 'Volcker disinflation'},
+    {y: 2009, v: 9.3, lbl: 'Great Financial Crisis'},
+    {y: 2020, v: 8.1, lbl: 'Pandemic'},
+    {y: 1969, v: 3.5, lbl: 'tight labor mkt'}
+  ];
+  annots.forEach((a, i) => {
+    setTimeout(() => {
+      const c = ns('circle', {cx:ax.xs(a.y), cy:ax.ys(a.v), r:3, class:'point'});
+      svg.appendChild(c);
+      const t = ns('text', {x:ax.xs(a.y), y:ax.ys(a.v) - 10, 'text-anchor':'middle', class:'label-text'}, a.lbl);
+      t.style.opacity = 0;
+      t.style.transition = 'opacity .6s';
+      svg.appendChild(t);
+      requestAnimationFrame(() => { t.style.opacity = 1; });
+    }, 1400 + i*120);
+  });
+}
+
+function renderSparks(){
+  const grid = $('#sparkGrid');
+  grid.innerHTML = '';
+  const cards = [
+    {key:'gdp',   nm:'Real GDP Growth',     about:'Real output, year-over-year.'},
+    {key:'fed',   nm:'Federal Funds Rate',  about:'The Federal Reserve\'s policy lever.'},
+    {key:'cpi',   nm:'CPI Inflation',       about:'Headline price growth, year-over-year.'},
+    {key:'lfp',   nm:'Labor Force Participation', about:'Share of working-age adults engaged.'}
+  ];
+  cards.forEach((c, i) => {
+    const data = getSeries(c.key);
+    const latest = data[data.length-1];
+    const card = document.createElement('div');
+    card.className = 'spark-card';
+    card.style.animation = `rise .6s cubic-bezier(.2,.7,.2,1) ${i*0.1}s both`;
+    card.innerHTML = `
+      <div class="h">
+        <div class="nm">${c.nm}</div>
+        <div class="v">${fmt(latest.y, 1)}%</div>
+      </div>
+      <svg viewBox="0 0 320 56" style="width:100%;height:56px;"></svg>
+      <div class="meta">${c.about} &nbsp;·&nbsp; <em>1960—2024</em></div>
+    `;
+    grid.appendChild(card);
+    const svg = card.querySelector('svg');
+    const ys = data.map(d=>d.y);
+    const yMin = Math.min(...ys), yMax = Math.max(...ys);
+    const ax = setupAxes(svg, {xMin:1960, xMax:2024, yMin, yMax, width:320, height:56, padL:2, padR:2, padT:6, padB:6});
+    const pth = pathFromPoints(data, ax);
+    // baseline zero if applicable
+    if (yMin < 0 && yMax > 0){
+      svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.ys(0), y2:ax.ys(0), stroke:'var(--rule)', 'stroke-width':0.5, 'stroke-dasharray':'2 2'}));
+    }
+    const p = ns('path', {d: pth, class:'data-line accent', 'stroke-width':1.2});
+    svg.appendChild(p);
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.transition = `stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1) ${0.4 + i*0.15}s`;
+    requestAnimationFrame(() => { p.style.strokeDashoffset = 0; });
+    // endpoint dot
+    const last = data[data.length-1];
+    const dot = ns('circle', {cx:ax.xs(last.x), cy:ax.ys(last.y), r:2.5, fill:'var(--accent)'});
+    svg.appendChild(dot);
+  });
+}
+
+/* ============================================================
+   5. HISTORICAL VIEWER
+   ============================================================ */
+function renderHistory(){
+  const primKey = $('#histPrim').value;
+  const secKey = $('#histSec').value;
+  const fromY = clamp(parseInt($('#histFrom').value)||1960, 1960, 2024);
+  const toY = clamp(parseInt($('#histTo').value)||2024, fromY, 2024);
+
+  $('#histTitlePrim').textContent = SERIES[primKey].label;
+  $('#histTitleSec').textContent = SERIES[secKey].label;
+
+  const primData = getSeries(primKey, fromY, toY);
+  const secData = getSeries(secKey, fromY, toY);
+
+  const corr = correlation(primData.map(d=>d.y), secData.map(d=>d.y));
+  $('#histCorr').innerHTML = `correlation r&nbsp;=&nbsp;<span class="mono" style="color:var(--accent); font-weight:500;">${fmt(corr, 3)}</span> &nbsp;·&nbsp; ${primData.length} obs.`;
+
+  const svg = $('#histChart');
+  svg.innerHTML = '';
+
+  // Two y-axes — left for primary, right for secondary
+  const primMin = Math.min(...primData.map(d=>d.y));
+  const primMax = Math.max(...primData.map(d=>d.y));
+  const secMin = Math.min(...secData.map(d=>d.y));
+  const secMax = Math.max(...secData.map(d=>d.y));
+  const padPrim = (primMax - primMin) * 0.1 || 1;
+  const padSec = (secMax - secMin) * 0.1 || 1;
+  const pMin = Math.floor(primMin - padPrim), pMax = Math.ceil(primMax + padPrim);
+  const sMin = Math.floor(secMin - padSec), sMax = Math.ceil(secMax + padSec);
+
+  const ax = setupAxes(svg, {xMin:fromY, xMax:toY, yMin:pMin, yMax:pMax, width:1000, height:360, padL:52, padR:52, padT:30, padB:40});
+  drawRecessions(svg, ax, RECESSIONS.filter(r=>r[1]>=fromY && r[0]<=toY), pMin, pMax);
+
+  // axes
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.height-ax.padB, y2:ax.height-ax.padB, class:'axis-line'}));
+  const xStep = Math.max(2, Math.ceil((toY-fromY)/10));
+  for(let x=Math.ceil(fromY/xStep)*xStep; x<=toY; x+=xStep){
+    const xp = ax.xs(x);
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:ax.height-ax.padB, y2:ax.height-ax.padB+4, class:'axis-line'}));
+    svg.appendChild(ns('text', {x:xp, y:ax.height-ax.padB+15, 'text-anchor':'middle', class:'axis-text'}, String(x)));
+  }
+  // y left
+  const yStep = Math.max(1, Math.round((pMax-pMin)/6));
+  for(let y=Math.ceil(pMin/yStep)*yStep; y<=pMax; y+=yStep){
+    const yp = ax.ys(y);
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:yp, y2:yp, class:'grid'}));
+    svg.appendChild(ns('text', {x:ax.padL-8, y:yp+3, 'text-anchor':'end', class:'axis-text', fill:'var(--accent)'}, fmt(y,0)));
+  }
+  // y right (secondary)
+  const yStepS = Math.max(1, Math.round((sMax-sMin)/6));
+  for(let y=Math.ceil(sMin/yStepS)*yStepS; y<=sMax; y+=yStepS){
+    const yp = ax.padT + (1 - (y - sMin) / (sMax - sMin)) * (ax.height - ax.padT - ax.padB);
+    svg.appendChild(ns('text', {x:ax.width-ax.padR+8, y:yp+3, 'text-anchor':'start', class:'axis-text', fill:'var(--secondary)'}, fmt(y,0)));
+  }
+  // labels
+  svg.appendChild(ns('text', {x:ax.padL-8, y:ax.padT-8, 'text-anchor':'end', class:'label-text', fill:'var(--accent)'}, SERIES[primKey].unit));
+  svg.appendChild(ns('text', {x:ax.width-ax.padR+8, y:ax.padT-8, 'text-anchor':'start', class:'label-text', fill:'var(--secondary)'}, SERIES[secKey].unit));
+
+  // zero line if applicable for primary
+  if (pMin < 0 && pMax > 0){
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.ys(0), y2:ax.ys(0), class:'axis-zero'}));
+  }
+
+  // Secondary path (mapped to secondary scale, but in same SVG)
+  const axS = {...ax, ys: y => ax.padT + (1 - (y - sMin) / (sMax - sMin)) * (ax.height - ax.padT - ax.padB)};
+  const secPath = ns('path', {d: pathFromPoints(secData, axS), class:'data-line secondary dash', 'stroke-width':1.3});
+  svg.appendChild(secPath);
+
+  // Primary path
+  const primPath = ns('path', {d: pathFromPoints(primData, ax), class:'data-line accent', 'stroke-width':1.8});
+  svg.appendChild(primPath);
+
+  [primPath, secPath].forEach((p, i) => {
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = (i === 1 ? '4 3' : len);
+    if (i === 0) {
+      p.style.strokeDashoffset = len;
+      p.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)';
+      requestAnimationFrame(() => { p.style.strokeDashoffset = 0; });
+    } else {
+      p.style.opacity = 0;
+      p.style.transition = 'opacity 1.2s ease .6s';
+      requestAnimationFrame(() => { p.style.opacity = 1; });
+    }
+  });
+
+  // legend
+  const legend = ns('g', {});
+  const lg = ns('g', {transform: `translate(${ax.padL+8}, ${ax.padT+8})`});
+  lg.appendChild(ns('line', {x1:0, y1:0, x2:18, y2:0, stroke:'var(--accent)', 'stroke-width':1.6}));
+  lg.appendChild(ns('text', {x:24, y:3, class:'label-text', fill:'var(--ink)'}, SERIES[primKey].label));
+  lg.appendChild(ns('line', {x1:0, y1:14, x2:18, y2:14, stroke:'var(--secondary)', 'stroke-width':1.3, 'stroke-dasharray':'4 3'}));
+  lg.appendChild(ns('text', {x:24, y:17, class:'label-text', fill:'var(--ink)'}, SERIES[secKey].label));
+  legend.appendChild(lg);
+  svg.appendChild(legend);
+}
+
+/* ============================================================
+   6. SIMULATOR — calibrated model
+   ============================================================ */
+const NATURAL_RATE = 4.5;
+
+const VARIABLES = [
+  // CYCLICAL
+  {key:'gdp',    name:'Real GDP Growth',     tag:'CYCLICAL', unit:'%', min:-4, max:8, step:0.1, base:2.0, desc:'Above-trend growth pulls unemployment down via Okun\'s Law.',  channel:'cyclical', coeff:-0.45, baseline:2.0},
+  {key:'conf',   name:'Consumer Confidence', tag:'CYCLICAL', unit:'idx', min:-30, max:30, step:1, base:0, desc:'Higher confidence boosts spending and hiring intentions.', channel:'cyclical', coeff:-0.04, baseline:0},
+  {key:'inv',    name:'Business Investment', tag:'CYCLICAL', unit:'% chg', min:-15, max:15, step:0.5, base:0, desc:'Capital expenditure expands labor demand.', channel:'cyclical', coeff:-0.10, baseline:0},
+  // MONETARY/FISCAL
+  {key:'fed',    name:'Federal Funds Rate',  tag:'MONETARY', unit:'%', min:0, max:12, step:0.25, base:2.5, desc:'Tighter policy raises unemployment with a 12–18 month lag.', channel:'cyclical', coeff:0.15, baseline:2.5},
+  {key:'gov',    name:'Government Spending', tag:'FISCAL', unit:'% of GDP Δ', min:-3, max:3, step:0.1, base:0, desc:'Fiscal stimulus reduces unemployment via the multiplier.', channel:'cyclical', coeff:-0.20, baseline:0},
+  {key:'tax',    name:'Tax Wedge on Labor',  tag:'FISCAL', unit:'pp', min:-5, max:5, step:0.5, base:0, desc:'Higher payroll/income taxes reduce hiring and labor supply.', channel:'structural', coeff:0.20, baseline:0},
+  // STRUCTURAL
+  {key:'mismatch',name:'Skills Mismatch',    tag:'STRUCTURAL', unit:'idx', min:-2, max:2, step:0.1, base:0, desc:'Worker skills failing to match job openings.', channel:'structural', coeff:0.50, baseline:0},
+  {key:'minwage',name:'Real Minimum Wage',   tag:'STRUCTURAL', unit:'% chg', min:-30, max:50, step:5, base:0, desc:'Above-market wage floors can price out low-skill labor.', channel:'structural', coeff:0.020, baseline:0},
+  {key:'union',  name:'Union Density',       tag:'STRUCTURAL', unit:'pp', min:-10, max:15, step:1, base:0, desc:'Collective bargaining can lift wages above market-clearing.', channel:'structural', coeff:0.06, baseline:0},
+  {key:'import', name:'Import Penetration',  tag:'TRADE/TECH', unit:'pp', min:-5, max:10, step:0.5, base:0, desc:'Trade-exposed sectors lose jobs faster than reallocation.', channel:'structural', coeff:0.10, baseline:0},
+  {key:'auto',   name:'Automation Pressure', tag:'TRADE/TECH', unit:'idx', min:-2, max:3, step:0.1, base:0, desc:'Displacement in routine tasks; short-run effects only.', channel:'structural', coeff:0.30, baseline:0},
+  // FRICTIONAL
+  {key:'ui',     name:'UI Benefit Generosity',tag:'FRICTIONAL', unit:'% replacement Δ', min:-20, max:30, step:1, base:0, desc:'More generous benefits lengthen job search.', channel:'frictional', coeff:0.015, baseline:0},
+  {key:'mob',    name:'Geographic Mobility', tag:'FRICTIONAL', unit:'%', min:-50, max:50, step:5, base:0, desc:'Lower mobility traps workers far from job openings.', channel:'frictional', coeff:-0.008, baseline:0},
+  {key:'lfp',    name:'Labor Force Part.',   tag:'STRUCTURAL', unit:'pp', min:-3, max:3, step:0.1, base:0, desc:'Higher participation mechanically lifts measured unemp.', channel:'frictional', coeff:0.25, baseline:0},
+  // PRICES
+  {key:'pi_e',   name:'Inflation Expectations', tag:'PRICES', unit:'%', min:-2, max:6, step:0.1, base:2.0, desc:'Higher expectations lower real wages; short-run u falls.', channel:'cyclical', coeff:-0.10, baseline:2.0},
+  {key:'prod',   name:'Productivity Growth', tag:'TRADE/TECH', unit:'%', min:-2, max:5, step:0.1, base:1.5, desc:'Ambiguous: less labor per output, but more output overall.', channel:'cyclical', coeff:0.05, baseline:1.5}
+];
+
+const simState = {};
+VARIABLES.forEach(v => simState[v.key] = v.base);
+
+function computeSim(){
+  let cyc = 0, str = 0, fri = 0;
+  VARIABLES.forEach(v => {
+    const dev = simState[v.key] - v.baseline;
+    const contrib = v.coeff * dev;
+    if (v.channel === 'cyclical') cyc += contrib;
+    else if (v.channel === 'structural') str += contrib;
+    else fri += contrib;
+  });
+  const u = NATURAL_RATE + cyc + str + fri;
+  return {u: clamp(u, 0, 25), cyc, str, fri, total: cyc + str + fri};
+}
+
+function buildSimControls(){
+  const c = $('#simControls');
+  c.innerHTML = '';
+  // group by tag
+  const groups = {};
+  VARIABLES.forEach(v => { (groups[v.tag] = groups[v.tag] || []).push(v); });
+  const tagOrder = ['CYCLICAL','MONETARY','FISCAL','STRUCTURAL','TRADE/TECH','FRICTIONAL','PRICES'];
+  tagOrder.forEach(tag => {
+    if (!groups[tag]) return;
+    const heading = document.createElement('div');
+    heading.className = 'label';
+    heading.style.marginTop = '8px';
+    heading.style.marginBottom = '4px';
+    heading.textContent = tag;
+    c.appendChild(heading);
+    groups[tag].forEach(v => {
+      const block = document.createElement('div');
+      block.className = 'control-block';
+      block.innerHTML = `
+        <div class="control-head">
+          <span class="name">${v.name}<span class="tag">${v.unit}</span></span>
+          <span class="v" data-k="${v.key}">${formatSimVal(v, v.base)}</span>
+        </div>
+        <div class="control-desc">${v.desc}</div>
+        <input type="range" min="${v.min}" max="${v.max}" step="${v.step}" value="${v.base}" data-k="${v.key}" />
+      `;
+      c.appendChild(block);
+    });
+  });
+  c.querySelectorAll('input[type=range]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      const k = e.target.dataset.k;
+      const v = parseFloat(e.target.value);
+      simState[k] = v;
+      const vDef = VARIABLES.find(x => x.key === k);
+      const vEl = c.querySelector(`.v[data-k=${k}]`);
+      vEl.textContent = formatSimVal(vDef, v);
+      vEl.classList.toggle('active', Math.abs(v - vDef.baseline) > 1e-6);
+      renderSimResult();
+    });
+  });
+}
+
+function formatSimVal(v, val){
+  const sign = (val > v.baseline ? '+' : '');
+  if (v.baseline !== 0 && (v.key === 'gdp' || v.key === 'fed' || v.key === 'pi_e' || v.key === 'prod')){
+    return `${fmt(val, v.step < 1 ? 1 : 0)}${v.unit === 'idx' ? '' : v.unit}`;
+  }
+  return `${sign}${fmt(val, v.step < 1 ? 1 : 0)}${v.unit === '%' || v.unit === 'pp' || v.unit === '% of GDP Δ' || v.unit === '% chg' || v.unit === '% replacement Δ' ? v.unit : ' '+v.unit}`;
+}
+
+function renderSimResult(){
+  const r = computeSim();
+  // animate the big number
+  const el = $('#simU');
+  const old = parseFloat(el.textContent);
+  animateNumber(el, old, r.u, 380);
+
+  // delta from natural
+  const delta = r.u - NATURAL_RATE;
+  const dEl = $('#simDelta');
+  if (Math.abs(delta) < 0.01){
+    dEl.innerHTML = `<span style="color:var(--rule);">at natural rate</span>`;
+    $('#simResult').classList.remove('shock-up','shock-down');
+  } else {
+    const sign = delta > 0 ? '+' : '';
+    const cls = delta > 0 ? 'delta-up' : 'delta-down';
+    const arr = delta > 0 ? '↑' : '↓';
+    dEl.innerHTML = `<span class="arrow ${cls}">${arr}</span><span class="${cls}">${sign}${fmt(delta, 2)} pp from natural rate (${NATURAL_RATE}%)</span>`;
+    $('#simResult').classList.toggle('shock-up', delta > 0);
+    $('#simResult').classList.toggle('shock-down', delta < 0);
+  }
+
+  // footnote
+  const fn = $('#simFootnote');
+  if (Math.abs(r.total) < 0.05){
+    fn.textContent = 'All variables at baseline — the natural rate of unemployment, approximately 4.5%.';
+  } else {
+    const dominant = ['cyclical','structural','frictional'][[Math.abs(r.cyc), Math.abs(r.str), Math.abs(r.fri)].indexOf(Math.max(Math.abs(r.cyc), Math.abs(r.str), Math.abs(r.fri)))];
+    fn.textContent = `The dominant force is the ${dominant} channel, contributing ${fmt(({cyclical:r.cyc,structural:r.str,frictional:r.fri})[dominant], 2)} percentage points. The model is calibrated to U.S. post-war elasticities.`;
+  }
+
+  // decomposition bars
+  renderDecomp(r);
+}
+
+function animateNumber(el, from, to, dur){
+  const t0 = performance.now();
+  function step(t){
+    const k = clamp((t-t0)/dur, 0, 1);
+    const eased = 1 - Math.pow(1-k, 3);
+    el.textContent = fmt(from + (to-from)*eased, 2);
+    if (k < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function renderDecomp(r){
+  const d = $('#simDecomp');
+  d.innerHTML = '<div class="label" style="margin-bottom:14px;">Decomposition by channel</div>';
+  const rows = [
+    {nm:'Cyclical',   desc:'Okun, monetary, fiscal',  v:r.cyc},
+    {nm:'Structural', desc:'Skills, trade, minwage, tax',  v:r.str},
+    {nm:'Frictional', desc:'Search, mobility, benefits, LFP', v:r.fri}
+  ];
+  // total
+  const totalDiv = document.createElement('div');
+  totalDiv.className = 'decomp-row';
+  totalDiv.innerHTML = `
+    <div class="decomp-head"><span class="label-name">Total deviation from natural rate</span><span class="v" style="color:${r.total>=0?'var(--accent)':'var(--positive)'};">${r.total>0?'+':''}${fmt(r.total, 2)} pp</span></div>
+    <div class="decomp-bar"><div class="zero"></div><div class="fill ${r.total<0?'neg':''}" style="left:${50 + Math.min(0, r.total*8)}%; width:${Math.min(50, Math.abs(r.total)*8)}%;"></div></div>
+  `;
+  d.appendChild(totalDiv);
+  rows.forEach(row => {
+    const div = document.createElement('div');
+    div.className = 'decomp-row';
+    div.innerHTML = `
+      <div class="decomp-head"><span class="label-name">${row.nm}<span class="desc">${row.desc}</span></span><span class="v">${row.v>0?'+':''}${fmt(row.v, 2)} pp</span></div>
+      <div class="decomp-bar"><div class="zero"></div><div class="fill ${row.v<0?'neg':''}" style="left:${50 + Math.min(0, row.v*10)}%; width:${Math.min(50, Math.abs(row.v)*10)}%;"></div></div>
+    `;
+    d.appendChild(div);
+  });
+}
+
+const PRESETS = {
+  recession: {gdp:-2, conf:-25, inv:-10, fed:0.5, gov:1, mismatch:0.4, auto:0.3, ui:5},
+  stagflation: {gdp:-0.5, conf:-15, fed:8, pi_e:6, import:1, prod:-0.5, mismatch:0.5},
+  goldilocks: {gdp:4.5, conf:20, inv:8, fed:5, prod:2.5, lfp:0.5, mismatch:-0.3},
+  covid: {gdp:-4, conf:-30, inv:-15, fed:-2, gov:3, mismatch:0.8, lfp:-2}
+};
+
+function applyPreset(name){
+  // reset first
+  VARIABLES.forEach(v => simState[v.key] = v.base);
+  // apply preset
+  const preset = PRESETS[name];
+  Object.keys(preset).forEach(k => { simState[k] = preset[k]; });
+  // sync UI
+  $$('#simControls input[type=range]').forEach(inp => {
+    const k = inp.dataset.k;
+    inp.value = simState[k];
+    const v = VARIABLES.find(x => x.key === k);
+    const vEl = $(`#simControls .v[data-k=${k}]`);
+    vEl.textContent = formatSimVal(v, simState[k]);
+    vEl.classList.toggle('active', Math.abs(simState[k] - v.baseline) > 1e-6);
+  });
+  renderSimResult();
+}
+
+function resetSim(){
+  VARIABLES.forEach(v => simState[v.key] = v.base);
+  $$('#simControls input[type=range]').forEach(inp => {
+    const k = inp.dataset.k;
+    const v = VARIABLES.find(x => x.key === k);
+    inp.value = v.base;
+    const vEl = $(`#simControls .v[data-k=${k}]`);
+    vEl.textContent = formatSimVal(v, v.base);
+    vEl.classList.remove('active');
+  });
+  renderSimResult();
+}
+
+/* ============================================================
+   7. FORECAST
+   ============================================================ */
+const FC_VARS = {
+  gdp:    {name:'Real GDP Growth',  unit:'pp', irf:[0.0,-0.18,-0.30,-0.40,-0.45,-0.42,-0.35,-0.28,-0.20,-0.14,-0.10,-0.06,-0.04,-0.02,-0.01,0,0,0,0,0]},
+  fed:    {name:'Federal Funds Rate', unit:'pp', irf:[0.0,0.02,0.05,0.09,0.14,0.18,0.22,0.24,0.22,0.18,0.14,0.10,0.06,0.04,0.02,0.01,0,0,0,0]},
+  gov:    {name:'Government Spending', unit:'pp of GDP', irf:[0.0,-0.10,-0.18,-0.22,-0.20,-0.16,-0.12,-0.08,-0.05,-0.03,-0.02,-0.01,0,0,0,0,0,0,0,0]},
+  conf:   {name:'Consumer Confidence', unit:'pp idx', irf:[0.0,-0.04,-0.06,-0.08,-0.07,-0.05,-0.03,-0.02,-0.01,0,0,0,0,0,0,0,0,0,0,0]},
+  prod:   {name:'Productivity Growth', unit:'pp', irf:[0.0,0.02,0.04,0.05,0.04,0.02,0,-0.02,-0.04,-0.05,-0.04,-0.03,-0.02,-0.01,0,0,0,0,0,0]},
+  import: {name:'Import Penetration', unit:'pp', irf:[0.0,0.03,0.06,0.08,0.10,0.11,0.10,0.09,0.08,0.07,0.06,0.05,0.04,0.03,0.02,0.02,0.01,0.01,0,0]}
+};
+
+function ar1Forecast(series, h){
+  // fit AR(1): u_t = c + φ u_{t-1} + ε
+  const n = series.length;
+  const xs = series.slice(0,-1), ys = series.slice(1);
+  const reg = linreg(xs, ys);
+  const fc = [];
+  let last = series[n-1];
+  for (let i=0;i<h;i++){
+    last = reg.intercept + reg.slope * last;
+    fc.push(last);
+  }
+  // residual std for CI
+  let ss = 0;
+  for (let i=0;i<xs.length;i++){
+    const pred = reg.intercept + reg.slope * xs[i];
+    ss += (ys[i]-pred)**2;
+  }
+  const sigma = Math.sqrt(ss / (xs.length-2));
+  return {fc, sigma};
+}
+
+function naiveForecast(series, h){
+  const last = series[series.length-1];
+  const fc = Array(h).fill(last);
+  // residual = first differences
+  let ss = 0;
+  for (let i=1;i<series.length;i++) ss += (series[i]-series[i-1])**2;
+  const sigma = Math.sqrt(ss / (series.length-1));
+  return {fc, sigma};
+}
+
+function trendForecast(series, h){
+  const xs = range(series.length);
+  const reg = linreg(xs, series);
+  const fc = [];
+  for (let i=0;i<h;i++) fc.push(reg.intercept + reg.slope * (series.length + i));
+  let ss = 0;
+  xs.forEach((x,i) => { ss += (series[i] - reg.intercept - reg.slope*x)**2; });
+  const sigma = Math.sqrt(ss / (xs.length-2));
+  return {fc, sigma};
+}
+
+function expSmoothForecast(series, h){
+  // Holt linear trend: alpha=0.4, beta=0.1
+  const alpha = 0.4, beta = 0.1;
+  let level = series[0], trend = series[1]-series[0];
+  for (let i=1;i<series.length;i++){
+    const lvl = alpha*series[i] + (1-alpha)*(level+trend);
+    trend = beta*(lvl-level) + (1-beta)*trend;
+    level = lvl;
+  }
+  const fc = [];
+  for (let i=0;i<h;i++) fc.push(level + (i+1)*trend);
+  // simple sigma from residual fit
+  let ss = 0, lvl = series[0], trd = series[1]-series[0];
+  for (let i=1;i<series.length;i++){
+    const pred = lvl + trd;
+    ss += (series[i]-pred)**2;
+    const newL = alpha*series[i] + (1-alpha)*(lvl+trd);
+    trd = beta*(newL-lvl) + (1-beta)*trd;
+    lvl = newL;
+  }
+  const sigma = Math.sqrt(ss / (series.length-2));
+  return {fc, sigma};
+}
+
+function zScore(p){
+  // p is two-tailed CI, find z
+  const table = {0.8:1.282, 0.9:1.645, 0.95:1.96};
+  return table[p] || 1.282;
+}
+
+function runForecast(){
+  const variable = $('#fcVar').value;
+  const mag = parseFloat($('#fcMag').value);
+  const hor = parseInt($('#fcHor').value);
+  const method = $('#fcMethod').value;
+  const ciLevel = parseFloat($('#fcCI').value);
+
+  const histY = DATA.map(r => r[1]); // unemployment series
+
+  // Baseline forecast
+  let baseline;
+  if (method === 'ar') baseline = ar1Forecast(histY, hor);
+  else if (method === 'naive') baseline = naiveForecast(histY, hor);
+  else if (method === 'trend') baseline = trendForecast(histY, hor);
+  else baseline = expSmoothForecast(histY, hor);
+
+  // Add impulse response from structural model
+  const irf = FC_VARS[variable].irf;
+  const withShock = baseline.fc.map((v, i) => v + (irf[i] || 0) * mag);
+
+  // Confidence bands — sigma grows with sqrt(h)
+  const z = zScore(ciLevel);
+  const upper = withShock.map((v, i) => v + z * baseline.sigma * Math.sqrt(i+1));
+  const lower = withShock.map((v, i) => Math.max(0, v - z * baseline.sigma * Math.sqrt(i+1)));
+
+  $('#fcMeta').innerHTML = `${FC_VARS[variable].name} shock = <span class="mono" style="color:var(--accent);">${mag>0?'+':''}${fmt(mag,1)} ${FC_VARS[variable].unit}</span> &nbsp;·&nbsp; method: ${method.toUpperCase()} &nbsp;·&nbsp; ${ciLevel ? (ciLevel*100)+'% bands' : 'no bands'}`;
+  $('#fcMagV').textContent = `${mag>0?'+':''}${fmt(mag,1)} ${FC_VARS[variable].unit}`;
+  $('#fcHorV').textContent = `${hor} quarters`;
+
+  drawForecastChart(histY, withShock, baseline.fc, upper, lower, ciLevel);
+  drawForecastStats(withShock, baseline.fc);
+}
+
+function drawForecastChart(hist, fc, fcBase, upper, lower, ciLevel){
+  const svg = $('#fcChart');
+  svg.innerHTML = '';
+
+  // Last 20 years of history (annual), plus quarterly forecast — we'll display annual hist as years and forecast as quarters extended
+  const histPoints = hist.slice(-25).map((y, i) => ({x: i, y}));
+  const histEnd = histPoints.length - 1;
+  const fcPoints = fc.map((y, i) => ({x: histEnd + (i+1)*0.25, y}));
+  const fcBasePoints = fcBase.map((y, i) => ({x: histEnd + (i+1)*0.25, y}));
+  const upperPoints = upper.map((y, i) => ({x: histEnd + (i+1)*0.25, y}));
+  const lowerPoints = lower.map((y, i) => ({x: histEnd + (i+1)*0.25, y}));
+
+  const allY = [...hist.slice(-25), ...fc, ...upper, ...lower];
+  const yMin = Math.max(0, Math.floor(Math.min(...allY) - 1));
+  const yMax = Math.ceil(Math.max(...allY) + 1);
+  const xMax = fcPoints[fcPoints.length-1].x;
+
+  const ax = setupAxes(svg, {xMin:0, xMax:xMax+0.5, yMin, yMax, width:1000, height:360, padL:46, padR:24, padT:30, padB:36});
+
+  // grid + axes
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.height-ax.padB, y2:ax.height-ax.padB, class:'axis-line'}));
+  const yStep = Math.max(1, Math.round((yMax-yMin)/6));
+  for(let y=Math.ceil(yMin/yStep)*yStep; y<=yMax; y+=yStep){
+    const yp = ax.ys(y);
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:yp, y2:yp, class:'grid'}));
+    svg.appendChild(ns('text', {x:ax.padL-8, y:yp+3, 'text-anchor':'end', class:'axis-text'}, fmt(y, 0)));
+  }
+  // x labels — historical years + forecast quarters
+  const startYear = DATA[DATA.length - histPoints.length][0];
+  for (let i=0;i<histPoints.length;i+=5){
+    const xp = ax.xs(i);
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:ax.height-ax.padB, y2:ax.height-ax.padB+4, class:'axis-line'}));
+    svg.appendChild(ns('text', {x:xp, y:ax.height-ax.padB+15, 'text-anchor':'middle', class:'axis-text'}, String(startYear+i)));
+  }
+  // forecast q markers
+  fcPoints.forEach((p, i) => {
+    if ((i+1) % 4 === 0){
+      const xp = ax.xs(p.x);
+      svg.appendChild(ns('line', {x1:xp, x2:xp, y1:ax.height-ax.padB, y2:ax.height-ax.padB+4, class:'axis-line'}));
+      svg.appendChild(ns('text', {x:xp, y:ax.height-ax.padB+15, 'text-anchor':'middle', class:'axis-text'}, `+${i+1}q`));
+    }
+  });
+
+  // labels
+  svg.appendChild(ns('text', {x:ax.padL-8, y:ax.padT-8, 'text-anchor':'end', class:'label-text'}, 'unemp (%)'));
+
+  // forecast region shade
+  const fcStartX = ax.xs(histEnd);
+  svg.appendChild(ns('rect', {x:fcStartX, y:ax.padT, width:ax.width-ax.padR-fcStartX, height:ax.height-ax.padT-ax.padB, fill:'var(--paper-deep)', opacity:0.4}));
+  svg.appendChild(ns('line', {x1:fcStartX, x2:fcStartX, y1:ax.padT, y2:ax.height-ax.padB, stroke:'var(--ink-soft)', 'stroke-width':0.5, 'stroke-dasharray':'3 3'}));
+  svg.appendChild(ns('text', {x:fcStartX+6, y:ax.padT+12, class:'label-text', 'font-style':'italic'}, 'forecast →'));
+
+  // Confidence band
+  if (ciLevel > 0){
+    const bandPath = `M${ax.xs(upperPoints[0].x)},${ax.ys(upperPoints[0].y)} ` +
+      upperPoints.map(p => `L${ax.xs(p.x)},${ax.ys(p.y)}`).join(' ') +
+      ` ` + lowerPoints.slice().reverse().map(p => `L${ax.xs(p.x)},${ax.ys(p.y)}`).join(' ') + ` Z`;
+    const band = ns('path', {d:bandPath, class:'data-area band', fill:'var(--accent)'});
+    band.style.opacity = 0;
+    band.style.transition = 'opacity .8s ease .4s';
+    svg.appendChild(band);
+    requestAnimationFrame(() => { band.style.opacity = .14; });
+  }
+
+  // Historical line
+  const histPath = ns('path', {d: pathFromPoints(histPoints, ax), class:'data-line', 'stroke-width':1.6});
+  svg.appendChild(histPath);
+  const histLen = histPath.getTotalLength();
+  histPath.style.strokeDasharray = histLen;
+  histPath.style.strokeDashoffset = histLen;
+  histPath.style.transition = 'stroke-dashoffset 1.0s cubic-bezier(.4,0,.2,1)';
+  requestAnimationFrame(() => { histPath.style.strokeDashoffset = 0; });
+
+  // Baseline forecast (no shock) — dashed neutral
+  const bridgeBase = [{x:histEnd, y:hist[hist.length-1]}, ...fcBasePoints];
+  const basePath = ns('path', {d: pathFromPoints(bridgeBase, ax), class:'data-line dash', stroke:'var(--mute)', 'stroke-width':1.2});
+  svg.appendChild(basePath);
+  basePath.style.opacity = 0;
+  basePath.style.transition = 'opacity .8s ease .8s';
+  requestAnimationFrame(() => { basePath.style.opacity = 1; });
+
+  // Forecast WITH shock
+  const bridgeFc = [{x:histEnd, y:hist[hist.length-1]}, ...fcPoints];
+  const fcPath = ns('path', {d: pathFromPoints(bridgeFc, ax), class:'data-line accent', 'stroke-width':2});
+  svg.appendChild(fcPath);
+  const fcLen = fcPath.getTotalLength();
+  fcPath.style.strokeDasharray = fcLen;
+  fcPath.style.strokeDashoffset = fcLen;
+  fcPath.style.transition = 'stroke-dashoffset 1.0s cubic-bezier(.4,0,.2,1) 1.0s';
+  requestAnimationFrame(() => { fcPath.style.strokeDashoffset = 0; });
+
+  // legend
+  const lg = ns('g', {transform:`translate(${ax.padL+8}, ${ax.padT+8})`});
+  lg.appendChild(ns('line', {x1:0, y1:0, x2:14, y2:0, stroke:'var(--ink)', 'stroke-width':1.5}));
+  lg.appendChild(ns('text', {x:18, y:3, class:'label-text'}, 'history'));
+  lg.appendChild(ns('line', {x1:0, y1:13, x2:14, y2:13, stroke:'var(--mute)', 'stroke-width':1.2, 'stroke-dasharray':'4 3'}));
+  lg.appendChild(ns('text', {x:18, y:16, class:'label-text'}, 'baseline (no shock)'));
+  lg.appendChild(ns('line', {x1:0, y1:26, x2:14, y2:26, stroke:'var(--accent)', 'stroke-width':1.8}));
+  lg.appendChild(ns('text', {x:18, y:29, class:'label-text'}, 'with shock'));
+  svg.appendChild(lg);
+
+  // endpoint label
+  const lastFc = fcPoints[fcPoints.length-1];
+  const endC = ns('circle', {cx:ax.xs(lastFc.x), cy:ax.ys(lastFc.y), r:3.5, class:'point'});
+  svg.appendChild(endC);
+  svg.appendChild(ns('text', {x:ax.xs(lastFc.x), y:ax.ys(lastFc.y)-10, 'text-anchor':'middle', class:'label-text'}, `${fmt(lastFc.y,2)}%`));
+}
+
+function drawForecastStats(fc, fcBase){
+  const grid = $('#fcStats');
+  grid.innerHTML = '';
+  const peak = Math.max(...fc);
+  const trough = Math.min(...fc);
+  const end = fc[fc.length-1];
+  const peakBase = Math.max(...fcBase);
+  const totalEffect = end - fcBase[fcBase.length-1];
+
+  const cards = [
+    {nm:'Peak unemployment', v:fmt(peak,2)+'%', sub:`vs. ${fmt(peakBase,2)}% baseline`},
+    {nm:'End-horizon level', v:fmt(end,2)+'%', sub:`shock effect: ${totalEffect>0?'+':''}${fmt(totalEffect,2)} pp`},
+    {nm:'Cumulative shock effect', v: fmt(fc.reduce((a,b,i)=>a+b-fcBase[i],0), 2)+' pp·q', sub:'Σ deviation from baseline'}
+  ];
+  cards.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'spark-card';
+    div.style.animation = `rise .5s ease ${i*0.1}s both`;
+    div.innerHTML = `
+      <div class="h">
+        <div class="nm">${c.nm}</div>
+      </div>
+      <div style="font-family:'Fraunces',serif; font-size:30px; font-weight:300; letter-spacing:-0.02em;">${c.v}</div>
+      <div class="meta">${c.sub}</div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+/* ============================================================
+   8. PHILLIPS / OKUN SCATTER
+   ============================================================ */
+function eraFilter(era){
+  const ranges = {
+    all: [1960, 2024], '60s':[1960,1969], '70s':[1970,1979], '80s':[1980,1989],
+    '90s':[1990,1999], '00s':[2000,2009], '10s':[2010,2019], '20s':[2020,2024]
+  };
+  return ranges[era] || ranges.all;
+}
+
+function renderScatters(){
+  const era = $('#eraSelect').value;
+  const [yFrom, yTo] = eraFilter(era);
+  const sub = DATA.filter(r => r[0] >= yFrom && r[0] <= yTo);
+
+  // Okun: x = GDP growth, y = ΔUnemp (current - prior year)
+  const okunPts = [];
+  for (let i=1;i<sub.length;i++){
+    okunPts.push({x: sub[i][2], y: sub[i][1]-sub[i-1][1], year: sub[i][0]});
+  }
+  drawScatter($('#okunChart'), okunPts, {
+    xLabel:'Real GDP Growth (%)', yLabel:'Δ Unemployment (pp)',
+    xMin: Math.min(-3, Math.floor(Math.min(...okunPts.map(p=>p.x)))),
+    xMax: Math.max(8, Math.ceil(Math.max(...okunPts.map(p=>p.x)))),
+    yMin: -4, yMax: 4,
+    targetEl: '#okunNote'
+  });
+
+  // Phillips: x = Unemp, y = CPI inflation
+  const philPts = sub.map(r => ({x:r[1], y:r[4], year:r[0]}));
+  drawScatter($('#philChart'), philPts, {
+    xLabel:'Unemployment Rate (%)', yLabel:'CPI Inflation (%)',
+    xMin: Math.max(3, Math.floor(Math.min(...philPts.map(p=>p.x)))-1),
+    xMax: Math.ceil(Math.max(...philPts.map(p=>p.x)))+1,
+    yMin: Math.min(-1, Math.floor(Math.min(...philPts.map(p=>p.y)))),
+    yMax: Math.ceil(Math.max(...philPts.map(p=>p.y)))+1,
+    targetEl: '#philNote'
+  });
+}
+
+function drawScatter(svg, pts, opts){
+  svg.innerHTML = '';
+  const ax = setupAxes(svg, {xMin:opts.xMin, xMax:opts.xMax, yMin:opts.yMin, yMax:opts.yMax, width:480, height:380, padL:46, padR:20, padT:24, padB:38});
+  // axes & grid
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.height-ax.padB, y2:ax.height-ax.padB, class:'axis-line'}));
+  svg.appendChild(ns('line', {x1:ax.padL, x2:ax.padL, y1:ax.padT, y2:ax.height-ax.padB, class:'axis-line'}));
+  const xStep = Math.max(1, Math.round((opts.xMax-opts.xMin)/6));
+  const yStep = Math.max(1, Math.round((opts.yMax-opts.yMin)/6));
+  for(let x=Math.ceil(opts.xMin/xStep)*xStep; x<=opts.xMax; x+=xStep){
+    const xp = ax.xs(x);
+    svg.appendChild(ns('line', {x1:xp, x2:xp, y1:ax.padT, y2:ax.height-ax.padB, class:'grid'}));
+    svg.appendChild(ns('text', {x:xp, y:ax.height-ax.padB+15, 'text-anchor':'middle', class:'axis-text'}, fmt(x,0)));
+  }
+  for(let y=Math.ceil(opts.yMin/yStep)*yStep; y<=opts.yMax; y+=yStep){
+    const yp = ax.ys(y);
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:yp, y2:yp, class:'grid'}));
+    svg.appendChild(ns('text', {x:ax.padL-6, y:yp+3, 'text-anchor':'end', class:'axis-text'}, fmt(y,0)));
+  }
+  // zero lines if applicable
+  if (opts.yMin < 0 && opts.yMax > 0)
+    svg.appendChild(ns('line', {x1:ax.padL, x2:ax.width-ax.padR, y1:ax.ys(0), y2:ax.ys(0), class:'axis-zero'}));
+  if (opts.xMin < 0 && opts.xMax > 0)
+    svg.appendChild(ns('line', {x1:ax.xs(0), x2:ax.xs(0), y1:ax.padT, y2:ax.height-ax.padB, class:'axis-zero'}));
+
+  // labels
+  svg.appendChild(ns('text', {x:ax.width/2, y:ax.height-6, 'text-anchor':'middle', class:'axis-text'}, opts.xLabel));
+  svg.appendChild(ns('text', {x:12, y:ax.height/2, 'text-anchor':'middle', class:'axis-text', transform:`rotate(-90 12 ${ax.height/2})`}, opts.yLabel));
+
+  // Regression line
+  const xs = pts.map(p=>p.x), ys = pts.map(p=>p.y);
+  const reg = linreg(xs, ys);
+  const corr = correlation(xs, ys);
+  const x1 = opts.xMin, x2 = opts.xMax;
+  const y1 = reg.intercept + reg.slope * x1;
+  const y2 = reg.intercept + reg.slope * x2;
+  svg.appendChild(ns('line', {x1:ax.xs(x1), x2:ax.xs(x2), y1:ax.ys(y1), y2:ax.ys(y2), class:'regression'}));
+
+  // Scatter dots, animated in
+  pts.forEach((p, i) => {
+    const c = ns('circle', {cx:ax.xs(p.x), cy:ax.ys(p.y), r:0, class:'scatter-dot'});
+    c.dataset.year = p.year;
+    c.dataset.x = p.x;
+    c.dataset.y = p.y;
+    c.addEventListener('mouseenter', e => {
+      e.target.setAttribute('r', 6);
+      const tip = $('#tip');
+      const rect = svg.getBoundingClientRect();
+      tip.style.left = (rect.left + window.scrollX + parseFloat(e.target.getAttribute('cx')) * rect.width / 480) + 'px';
+      tip.style.top = (rect.top + window.scrollY + parseFloat(e.target.getAttribute('cy')) * rect.height / 380) + 'px';
+      tip.textContent = `${p.year}: x=${fmt(p.x,2)}, y=${fmt(p.y,2)}`;
+      tip.classList.add('show');
+    });
+    c.addEventListener('mouseleave', e => {
+      e.target.setAttribute('r', 4);
+      $('#tip').classList.remove('show');
+    });
+    svg.appendChild(c);
+    setTimeout(() => { c.setAttribute('r', 4); c.style.transition = 'r .3s'; }, 20 + i * 6);
+  });
+
+  $(opts.targetEl).innerHTML = `β = <span class="mono" style="color:var(--accent);">${fmt(reg.slope, 3)}</span> &nbsp;·&nbsp; r = <span class="mono" style="color:var(--accent);">${fmt(corr, 3)}</span> &nbsp;·&nbsp; n = ${pts.length}`;
+}
+
+/* ============================================================
+   9. TABS WIRING
+   ============================================================ */
+function wireTabs(){
+  $('#tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    $$('#tabs button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    $$('.panel').forEach(p => p.classList.remove('on'));
+    $('#panel-' + btn.dataset.tab).classList.add('on');
+    // lazy renders
+    if (btn.dataset.tab === 'history') renderHistory();
+    if (btn.dataset.tab === 'simulator') { /* already wired */ }
+    if (btn.dataset.tab === 'forecast') runForecast();
+    if (btn.dataset.tab === 'phillips') renderScatters();
+  });
+}
+
+function wireHistory(){
+  ['histPrim','histSec','histFrom','histTo'].forEach(id => {
+    $('#'+id).addEventListener('change', renderHistory);
+  });
+}
+
+function wireForecast(){
+  $('#fcMag').addEventListener('input', e => {
+    $('#fcMagV').textContent = `${e.target.value>0?'+':''}${fmt(parseFloat(e.target.value),1)} pp`;
+  });
+  $('#fcHor').addEventListener('input', e => {
+    $('#fcHorV').textContent = `${e.target.value} quarters`;
+  });
+  $('#fcRun').addEventListener('click', runForecast);
+  ['fcVar','fcMethod','fcCI'].forEach(id => {
+    $('#'+id).addEventListener('change', runForecast);
+  });
+  $('#fcMag').addEventListener('change', runForecast);
+  $('#fcHor').addEventListener('change', runForecast);
+}
+
+function wireSim(){
+  $$('[data-preset]').forEach(b => {
+    b.addEventListener('click', () => applyPreset(b.dataset.preset));
+  });
+  $('#simReset').addEventListener('click', resetSim);
+}
+
+function wirePhillips(){
+  $('#eraSelect').addEventListener('change', renderScatters);
+}
+
+function setDates(){
+  const d = new Date();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  $('#todayDate').textContent = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  $('#footYear').textContent = d.getFullYear();
+}
+
+/* ============================================================
+   10. INIT
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  setDates();
+  renderOverview();
+  buildSimControls();
+  renderSimResult();
+  wireTabs();
+  wireHistory();
+  wireForecast();
+  wireSim();
+  wirePhillips();
+});
+
+/* Handle resize for scatters & chart re-renders */
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const active = $('.panel.on');
+    if (!active) return;
+    if (active.id === 'panel-history') renderHistory();
+    if (active.id === 'panel-phillips') renderScatters();
+    if (active.id === 'panel-forecast') runForecast();
+  }, 200);
+});
+</script>
+</body>
+</html>
